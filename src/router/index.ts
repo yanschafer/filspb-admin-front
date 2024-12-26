@@ -11,11 +11,26 @@ const router = createRouter({
       component: LoginView,
     },
     {
-      path: '/dashboard',
+      path: '/dashboard/:tab',
+      name: 'dashboard',
+      component: DashboardView,
+    },
+    {
+      path: '/dashboard/:tab/:item',
       name: 'dashboard',
       component: DashboardView,
     },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  console.log("TO", to)
+  if (to.path == "/dashboard/") {
+      next({path: '/dashboard/affiche'})
+      return
+  }
+
+  next()
 })
 
 export default router

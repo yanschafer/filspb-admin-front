@@ -3,7 +3,7 @@
       <PanelMenu :model="items" class="w-full md:w-80">
         <template #item="{ item }">
           <!-- Если это не разделитель, отображаем обычный элемент меню -->
-          <a v-if="!item.divider" v-ripple class="flex items-center px-4 py-2 cursor-pointer group">
+          <a v-if="!item.divider" v-ripple class="flex items-center px-4 py-2 cursor-pointer group" @click="goTo(item.click)">
             <!-- Иконка -->
             <span :class="[item.icon, 'sidebar-icon text-primary group-hover:text-inherit']" />
             <!-- Название -->
@@ -21,11 +21,11 @@
   
       <!-- Постоянные элементы "Настройки" и "Администраторы" -->
       <div class="constant-items">
-        <a class="flex items-center px-4 py-2 cursor-pointer group">
+        <a class="flex items-center px-4 py-2 cursor-pointer group" @click="goTo('settings')">
           <span class="pi pi-cog sidebar-icon text-primary group-hover:text-inherit"></span>
           <span class="ml-2 font-semibold">Настройки</span>
         </a>
-        <a class="flex items-center px-4 py-2 cursor-pointer group">
+        <a class="flex items-center px-4 py-2 cursor-pointer group" @click="goTo('admins')">
           <span class="pi pi-users sidebar-icon text-primary group-hover:text-inherit"></span>
           <span class="ml-2 font-semibold">Администраторы</span>
         </a>
@@ -44,56 +44,70 @@
       PanelMenu,
       Badge
     },
+    methods: {
+      goTo(name) {
+        if (name == null || name == '') return;
+        this.$router.push({ path: `/dashboard/${name}` })
+      }
+    },
     data() {
       return {
         items: [
           {
             label: "Афиша",
             icon: "pi pi-calendar",
+            click: "",
             items: [
-              { label: "Мероприятия", icon: "pi pi-calendar-plus" },
-              { label: "Залы", icon: "pi pi-building" },
-              { label: "Отзывы", icon: "pi pi-comments" },
-              { label: "Площадки", icon: "pi pi-map-marker" },
-              { label: "События", icon: "pi pi-clock" },
-              { label: "Теги", icon: "pi pi-tag" }
+              { label: "Мероприятия", icon: "pi pi-calendar-plus", click: "affiche" },
+              { label: "Залы", icon: "pi pi-building", click: "halls" },
+              { label: "Отзывы", icon: "pi pi-comments", click: "review" },
+              { label: "Площадки", icon: "pi pi-map-marker", click: "platform" },
+              { label: "События", icon: "pi pi-clock", click: "events" },
+              { label: "Теги", icon: "pi pi-tag", click: "tags" }
             ]
           },
           {
             label: "Вакансии",
-            icon: "pi pi-briefcase"
+            icon: "pi pi-briefcase",
+            click: "vacancy"
           },
           {
             label: "Детские программы",
-            icon: "pi pi-face-smile"
+            icon: "pi pi-face-smile",
+            click: "children"
           },
           {
             label: "Документы",
-            icon: "pi pi-file"
+            icon: "pi pi-file",
+            click: "docs"
           },
           {
             label: "Люди",
             icon: "pi pi-users",
+            click: "",
             items: [
-              { label: "Категории", icon: "pi pi-sitemap" },
-              { label: "Список людей", icon: "pi pi-id-card" }
+              { label: "Категории", icon: "pi pi-sitemap", click: "employee-categories" },
+              { label: "Список людей", icon: "pi pi-id-card", click: "employee" }
             ]
           },
           {
             label: "Контакты",
             icon: "pi pi-phone",
+            click: "",
             items: [
-              { label: "Контакты людей", icon: "pi pi-user-plus" },
-              { label: "Контакты отделов", icon: "pi pi-building" }
+              { label: "Контакты людей", icon: "pi pi-user-plus", click: "employee-contacts" },
+              { label: "Контакты отделов", icon: "pi pi-building", click: "dep-contacts" }
             ]
           },
           {
             label: "Новости",
-            icon: "pi pi-bell"
+            icon: "pi pi-bell",
+            click: "news"
           },
           {
             label: "Партнеры",
-            icon: "pi pi-images"
+            icon: "pi pi-images",
+            click: "partners"
           }
         ]
       };
