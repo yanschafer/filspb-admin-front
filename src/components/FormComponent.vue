@@ -131,6 +131,10 @@
         chooseLabel="Выберите файл"
       />
     </div> -->
+    <div class="input-group">
+      <label for="block-create">Авторы мероприятия</label>
+      <BlockCreateComponent id="block-create" />
+    </div>
   </div>
 </template>
 
@@ -144,6 +148,7 @@ import {
   Checkbox,
 } from "primevue";
 import Editor from "primevue/editor";
+import BlockCreateComponent from "./BlockCreateComponent.vue";
 
 export default {
   name: "FormComponent",
@@ -155,6 +160,7 @@ export default {
     Editor,
     Textarea,
     Checkbox,
+    BlockCreateComponent
   },
   data() {
     return {
