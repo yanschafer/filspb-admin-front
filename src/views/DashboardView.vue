@@ -7,6 +7,7 @@
             <p>Добро пожаловать в панель управления, выберите в левом меню раздел, который хотите редактировать.</p>
             <ContentComponent />
             <ListComponent @update:items="updateItems" :items="listItems" />
+            <FormComponent />
         </div>
     </section>
 </template>
@@ -16,6 +17,7 @@ import HeaderComponent from '../components/HeaderComponent.vue'
 import SidebarComponent from "../components/SidebarComponent.vue"
 import ContentComponent from '../components/ContentComponent.vue'
 import ListComponent from '../components/ListComponent.vue'
+import FormComponent from '@/components/FormComponent.vue'
 
 export default {
   components: {
@@ -23,6 +25,7 @@ export default {
     SidebarComponent,
     ContentComponent,
     ListComponent,
+    FormComponent
   },
   data() {
     return {
