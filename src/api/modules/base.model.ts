@@ -6,6 +6,7 @@ export interface FieldDto {
     item: string,
     label: string,
     type: string,
+    value?: any,
     selectorModel?: BaseModel<any, any, any, any>,
     selectorOptions?: Record<string, any>
 }
@@ -22,15 +23,15 @@ export default class BaseModel<I, L, C, U> extends ApiModelUtil {
     }
 
     public async getAll(): Promise<ApiResponseDto<L[]>> {
-        return this.authorizedRequest(
+        return new ApiResponseDto(true, [], null) /* this.authorizedRequest(
             new ApiRequestDto('', 'GET')
-        )
+        )*/
     }
 
     public async getOne(itemId: number): Promise<ApiResponseDto<I>> {
-        return this.authorizedRequest(
+        return new ApiResponseDto(true, null, null) /* this.authorizedRequest(
             new ApiRequestDto(`${itemId}`, 'GET')
-        )
+        )*/
     }
 
     public async patch(itemId: number, updateDto: U): Promise<ApiResponseDto<I>> {

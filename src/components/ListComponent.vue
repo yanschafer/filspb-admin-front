@@ -25,13 +25,14 @@
         filter
         :style="{ width: '10%' }"
       />
-      <!-- Поле Название -->
+      
       <Column
-        field="name"
-        header="Название"
+        v-for="field in fields"
+        :field="field.key"
+        :header="field.header"
         sortable
         filter
-        :style="{ width: '60%' }"
+        :style="{ width: `${60 / fields.length}%` }"
       />
       <!-- Поле Управление -->
       <Column header="Управление" :style="{ width: '10%' }">
@@ -63,6 +64,7 @@
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import InputText from "primevue/inputtext";
+import { selectedModelStore } from '../store/selected-model.store';
 
 export default {
   name: "ListComponent",
@@ -76,6 +78,11 @@ export default {
       type: Array,
       required: true,
     },
+  },
+  setup() {
+    return {
+      selectedModel: selectedModelStore()
+    }
   },
   data() {
     return {
@@ -93,6 +100,9 @@ export default {
           String(item.id).includes(query)
       );
     },
+    fields() {
+      return this.selectedModel.cols
+    }
   },
   methods: {
   moveUp(item) {
@@ -103,6 +113,7 @@ export default {
         this.items[index],
         this.items[index - 1],
       ];
+      this.selectedModel.moveRowUp(item.id)
       // Оповещаем родительский компонент об изменении
       this.$emit("update:items", [...this.items]);
     }
@@ -115,18 +126,20 @@ export default {
         this.items[index + 1],
         this.items[index],
       ];
+      this.selectedModel.moveRow(item.id)
       // Оповещаем родительский компонент об изменении
       this.$emit("update:items", [...this.items]);
     }
   },
   viewItem(item) {
-    alert(`Просмотр элемента: ID = ${item.id}, Название = ${item.name}`);
+    this.selectedModel.toggleView(item.id)
   },
   editItem(item) {
-    alert(`Редактировать: ID = ${item.id}, Название = ${item.name}`);
+    this.$router.push({path: `/dashboard/${this.$route.params.tab}/${item.id}`})
   },
   deleteItem(item) {
-    if (confirm(`Удалить ${item.name} (ID: ${item.id})?`)) {
+    if (confirm(`Удалить ${item.name}?`)) {
+      this.selectedModel.delete(item.id)
       this.$emit(
         "update:items",
         this.items.filter((i) => i.id !== item.id)

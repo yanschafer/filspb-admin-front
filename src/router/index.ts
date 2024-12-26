@@ -17,7 +17,7 @@ const router = createRouter({
     },
     {
       path: '/dashboard/:tab/:item',
-      name: 'dashboard',
+      name: 'dashboard_concrete',
       component: DashboardView,
     },
   ],

@@ -18,8 +18,7 @@ import EventModel from "@/api/modules/event/event.model";
 import ReviewModel from "@/api/modules/review/review.model";
 import EventSecondModel from "@/api/modules/event_second/event-second.model";
 
-const selectedModelStore = defineStore({
-    id: "SelectedModel",
+export const selectedModelStore = defineStore("SelectedModel", {
     state: () => ({
         cols: [],
         items: [],
@@ -41,10 +40,17 @@ const selectedModelStore = defineStore({
             'news': new NewsModel(),
             'partners': new PartnersModel()
         },
+        model: new BaseModel('', {}, [])
     }),
     actions: {
+        async loadModelByName(name: string) {
+            return await this.loadModel(this.tabToModel[name])
+        },
         async loadModel<I, L, C, U>(model: BaseModel<I, L, C, U>) {
-            this.cols = model.cols
+            this.cols = Object.keys(model.cols).map(el => ({
+                key: el,
+                header: model.cols[el]   
+            }))
             const getAllRes = await model.getAll()
 
             if (!getAllRes.success)
@@ -54,10 +60,11 @@ const selectedModelStore = defineStore({
 
             return getAllRes
         },
-        async selectRow<I, L, C, U>(model: BaseModel<I, L, C, U>, id: number) {
+        async selectRow<I, L, C, U>(modelName: string, id: number) {
             //Try load, if req failed return error
-            if (this.items.length <= 0 && !(await this.loadModel(model)).success) return new ApiResponseDto(false, null, new ApiErrorDto(500, 'Server error', ''))
-
+            if (this.items.length <= 0 && !(await this.loadModelByName(modelName)).success) return new ApiResponseDto(false, null, new ApiErrorDto(500, 'Server error', ''))
+            const model = this.tabToModel[modelName]
+        
             const getOneRes = await model.getOne(id)
 
             if (!getOneRes.success)
@@ -66,8 +73,18 @@ const selectedModelStore = defineStore({
             this.selectedItem = getOneRes.getData()
 
             return getOneRes
+        },
+        toggleRowView(id: number) {
+            this.model.toggleVisibility(id)
+        },
+        moveRowUp(id: number) {
+            this.model.positionUp(id)
+        },
+        moveRowDown(id: number) {
+            this.model.positionDown(id)
+        },
+        delete(id: number) {
+            this.model.delete(id)
         }
     }
 })
-
-export default selectedModelStore

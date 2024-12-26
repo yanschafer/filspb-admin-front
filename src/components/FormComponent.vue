@@ -1,115 +1,124 @@
 <template>
   <div class="form-wrapper">
-    <!-- Текст -->
-    <div class="input-group">
-      <label for="username">Username</label>
-      <InputText id="username" v-model="value" placeholder="Текстовый" />
-    </div>
-    <!-- Текст с ошибкой -->
-    <div class="input-group">
-      <label for="username">Username</label>
-      <InputText
-        id="username"
-        v-model="value"
-        :invalid="!value"
-        placeholder="Что-то не так"
-      />
-    </div>
-    <!-- Дата -->
-    <div class="input-group">
-      <label for="date">Дата</label>
-      <DatePicker id="date" v-model="date" />
-    </div>
-    <!-- Селект -->
-    <div class="input-group">
-      <label for="select">Селект</label>
-      <Select
-        id="Select"
-        v-model="selectedItems"
-        :options="items"
-        filter
-        optionLabel="name"
-        placeholder="Select a Country"
-      >
-        <template #value="slotProps">
-          <div v-if="slotProps.value" class="flex items-center">
-            <div>{{ slotProps.value.name }}</div>
-          </div>
-          <span v-else>
-            {{ slotProps.placeholder }}
-          </span>
-        </template>
-        <template #option="slotProps">
-          <div class="flex items-center">
-            <div>{{ slotProps.option.name }}</div>
-          </div>
-        </template>
-      </Select>
-    </div>
-    <div class="input-group">
-      <label for="img-select">Файл аплоуд для картинок</label>
-      <FileUpload
-        id="img-select"
-        mode="basic"
-        @select="onFileSelect"
-        customUpload
-        auto
-        severity="secondary"
-        class="p-button-outlined"
-        chooseLabel="Выбрать изображение"
-      />
-      <img v-if="src" :src="src" alt="Image" class="img-preview" />
-    </div>
-    <div class="input-group">
-      <label for="img-select">Рич эдитор</label>
-      <Editor v-model="value" editorStyle="height: 320px" />
-    </div>
-    <div class="input-group">
-      <label for="img-select">Текст</label>
-      <Textarea v-model="value" rows="5" cols="30" />
-    </div>
-    <div class="input-group">
-      <label for="img-select">Чекбоксы</label>
-      <div class="checkbox-wrapper">
-        <div class="checkbox-single">
-          <Checkbox
-            v-model="pizza"
-            inputId="ingredient1"
-            name="pizza"
-            value="Cheese"
-          />
-          <label for="ingredient1"> Cheese </label>
-        </div>
-        <div class="checkbox-single">
-          <Checkbox
-            v-model="pizza"
-            inputId="ingredient1"
-            name="pizza"
-            value="Cheese"
-          />
-          <label for="ingredient1"> Cheese </label>
-        </div>
-        <div class="checkbox-single">
-          <Checkbox
-            v-model="pizza"
-            inputId="ingredient1"
-            name="pizza"
-            value="Cheese"
-          />
-          <label for="ingredient1"> Cheese </label>
-        </div>
-        <div class="checkbox-single">
-          <Checkbox
-            v-model="pizza"
-            inputId="ingredient1"
-            name="pizza"
-            value="Cheese"
-          />
-          <label for="ingredient1"> Cheese </label>
-        </div>
+
+    <template v-for="field in fields">
+      <!-- Текст с ошибкой -->
+      <div v-if="field.type == 'text'" class="input-group">
+        <label :for="field.item">{{ field.label }}</label>
+        <InputText
+          :id="field.item"
+          v-model="field.value"
+          :invalid="!field.value"
+          :placeholder="field.label"
+        />
       </div>
-    </div>
-    <div class="input-group">
+
+      <!-- Дата -->
+      <div v-if="field.type == 'timestamp'" class="input-group">
+        <label :for="field.item">{{field.label}}</label>
+        <DatePicker :id="field.item" v-model="field.value" />
+      </div>
+
+      <!-- Селект -->
+      <div v-if="field.type == 'selector' || field.type == 'model-selector'" class="input-group">
+        <label :for="field.item">{{field.label}}</label>
+        <Select
+          :id="field.item"
+          v-model="field.value"
+          :options="getSelectorOptions(field)"
+          filter
+          optionLabel="name"
+          :placeholder="field.label"
+        >
+          <template #value="slotProps">
+            <div v-if="slotProps.value" class="flex items-center">
+              <div>{{ slotProps.value.name }}</div>
+            </div>
+            <span v-else>
+              {{ slotProps.placeholder }}
+            </span>
+          </template>
+          <template #option="slotProps">
+            <div class="flex items-center">
+              <div>{{ slotProps.option.name }}</div>
+            </div>
+          </template>
+        </Select>
+      </div>
+
+      <!-- File -->
+      <div v-if="field.type == 'file' || field.type == 'image'" class="input-group">
+        <label :for="field.item">{{field.label}}к</label>
+        <FileUpload
+          :id="field.item"
+          mode="basic"
+          @select="onFileSelect"
+          customUpload
+          auto
+          severity="secondary"
+          class="p-button-outlined"
+          :chooseLabel="field.type == 'image' ? 'Выбрать изображение' : 'Выбрать файл'"
+        />
+        <img v-if="field.value && field.type == 'image'" :src="field.value" alt="Image" class="img-preview" />
+      </div>
+
+      <!-- Writer -->
+      <div v-if="field.type == 'writer'" class="input-group">
+        <label :for="field.item">{{field.label}}</label>
+        <Editor :id="field.item" v-model="field.value" editorStyle="height: 320px" />
+      </div>
+
+      <!-- Long text -->
+      <div v-if="field.type == 'long-text'" class="input-group">
+        <label :for="field.item">{{field.label}}</label>
+        <Textarea :id='field.item' v-model="field.value" rows="5" cols="30" />
+      </div>
+
+      <!-- Checkbox -->
+      <!-- <div v-if="field.type == 'checkbox'" class="input-group">
+        <label :for="field.item">{{field.label}}</label>
+        <div class="checkbox-wrapper">
+          <div class="checkbox-single">
+            <Checkbox
+              v-model="pizza"
+              inputId="ingredient1"
+              name="pizza"
+              value="Cheese"
+            />
+            <label for="ingredient1"> Cheese </label>
+          </div>
+          <div class="checkbox-single">
+            <Checkbox
+              v-model="pizza"
+              inputId="ingredient1"
+              name="pizza"
+              value="Cheese"
+            />
+            <label for="ingredient1"> Cheese </label>
+          </div>
+          <div class="checkbox-single">
+            <Checkbox
+              v-model="pizza"
+              inputId="ingredient1"
+              name="pizza"
+              value="Cheese"
+            />
+            <label for="ingredient1"> Cheese </label>
+          </div>
+          <div class="checkbox-single">
+            <Checkbox
+              v-model="pizza"
+              inputId="ingredient1"
+              name="pizza"
+              value="Cheese"
+            />
+            <label for="ingredient1"> Cheese </label>
+          </div>
+        </div>
+      </div> -->
+    </template>
+
+    <!-- <div class="input-group">
       <label for="img-select">Файл аплоуд для доков</label>
       <FileUpload
         ref="fileupload"
@@ -121,7 +130,7 @@
         @upload="onUpload"
         chooseLabel="Выберите файл"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 

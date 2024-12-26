@@ -1,5 +1,5 @@
 import ApiResponseDto from '@/api/dto/api-response.dto';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios from 'axios';
 import appConf from '@/api/conf/app.conf';
 import ApiRequestDto from '@/api/dto/api-request.dto';
 import TokenPairDto from '@/api/modules/auth/dto/token-pair.dto';
@@ -60,10 +60,10 @@ export default class ApiModelUtil {
         ...this.buildHeaders(refreshToken),
       },
     })
-      .then((res: AxiosResponse) =>
+      .then((res: any) =>
         this.processSuccessResponse<TokenPairDto>(res),
       )
-      .catch((err: AxiosError) =>
+      .catch((err: any) =>
         this.processFailedResponse<TokenPairDto>(null, false, err),
       );
     if (res.success) {
@@ -88,7 +88,7 @@ export default class ApiModelUtil {
   }
 
   private processSuccessResponse<T>(
-    response: AxiosResponse,
+    response: any,
   ): ApiResponseDto<T> {
     LoggerUtil.debugPrefixed(
       'API_MODEL',
@@ -101,7 +101,7 @@ export default class ApiModelUtil {
   private async processFailedResponse<T>(
     request: ApiRequestDto | null,
     authorized: boolean,
-    error: AxiosError,
+    error: any,
   ): Promise<ApiResponseDto<T>> {
     LoggerUtil.debugPrefixed(
       'API_MODEL',
@@ -142,8 +142,8 @@ export default class ApiModelUtil {
         ...this.buildHeaders(),
       },
     })
-      .then((res: AxiosResponse<T>) => this.processSuccessResponse<T>(res))
-      .catch((err: AxiosError) =>
+      .then((res: any) => this.processSuccessResponse<T>(res))
+      .catch((err: any) =>
         this.processFailedResponse<T>(request, false, err),
       );
 
@@ -153,7 +153,7 @@ export default class ApiModelUtil {
   async plainAuthorizedRequest(
     request: ApiRequestDto,
     headers: object = {},
-  ): Promise<AxiosResponse<any>> {
+  ): Promise<any> {
     const requestOptions = this.buildRequestOptions(request);
     LoggerUtil.debugPrefixed(
       'API_MODEL',
@@ -168,14 +168,14 @@ export default class ApiModelUtil {
         ...this.buildHeaders(accessToken),
         ...headers,
       },
-    }).catch(async (err: AxiosError) => {
+    }).catch(async (err: any) => {
       if (err.code == '401') {
         await this.authorizedRequest(
           new ApiRequestDto('/auth/authorized', 'GET'),
         );
         return this.plainAuthorizedRequest(request, headers);
       } else throw err;
-    }) as Promise<AxiosResponse<any>> | Promise<AxiosError> | any;
+    }) as Promise<any> | Promise<any> | any;
   }
 
   async authorizedRequest<T>(
@@ -195,8 +195,8 @@ export default class ApiModelUtil {
         ...this.buildHeaders(accessToken),
       },
     })
-      .then((res: AxiosResponse<T>) => this.processSuccessResponse<T>(res))
-      .catch((err: AxiosError) =>
+      .then((res: any) => this.processSuccessResponse<T>(res))
+      .catch((err: any) =>
         this.processFailedResponse<T>(request, true, err),
       );
 

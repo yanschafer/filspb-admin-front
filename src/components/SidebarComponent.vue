@@ -37,6 +37,7 @@
   import { ref } from "vue";
   import PanelMenu from "primevue/panelmenu";
   import Badge from "primevue/badge";
+  import { selectedModelStore } from '../store/selected-model.store';
   
   export default {
     name: 'SidebarComponent',
@@ -47,6 +48,8 @@
     methods: {
       goTo(name) {
         if (name == null || name == '') return;
+        const selectedModel = selectedModelStore()
+        selectedModel.loadModelByName(name)
         this.$router.push({ path: `/dashboard/${name}` })
       }
     },

@@ -1,5 +1,4 @@
 import ApiErrorDto from '@/api/dto/api-error.dto';
-import { AxiosError, AxiosResponse } from 'axios';
 import ConvertResponseException from '@/api/exceptions/ConvertResponseException';
 
 export default class ApiResponseDto<T> {
@@ -24,7 +23,7 @@ export default class ApiResponseDto<T> {
     throw new ConvertResponseException();
   }
 
-  static successResponse<T>(response: AxiosResponse): ApiResponseDto<T> {
+  static successResponse<T>(response: any): ApiResponseDto<T> {
     return new ApiResponseDto(true, response.data as T, null);
   }
 
@@ -36,7 +35,7 @@ export default class ApiResponseDto<T> {
     );
   }
 
-  static buildFromError(error: AxiosError): ApiResponseDto<any> {
+  static buildFromError(error: any): ApiResponseDto<any> {
     if (error.response) {
       //@ts-ignore
       if (error.response.data.httpStatusCode) {

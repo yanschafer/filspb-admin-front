@@ -8,6 +8,7 @@ import Aura from '@primevue/themes/aura';
 import { definePreset } from '@primevue/themes';
 import ToastService from 'primevue/toastservice';
 import 'primeicons/primeicons.css';
+import { createPinia } from 'pinia';
 
 
 
@@ -38,4 +39,5 @@ app.use(PrimeVue, {
 });
 app.use(router)
 app.use(ToastService);
+app.use(createPinia())
 app.mount('#app')
