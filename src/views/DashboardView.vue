@@ -17,6 +17,7 @@ import HeaderComponent from '../components/HeaderComponent.vue'
 import SidebarComponent from "../components/SidebarComponent.vue"
 import ContentComponent from '../components/ContentComponent.vue'
 import ListComponent from '../components/ListComponent.vue'
+import selectedModelStore from '../store/selected-model.store';
 import FormComponent from '@/components/FormComponent.vue'
 
 export default {
@@ -33,7 +34,22 @@ export default {
         id: i + 1,
         name: `Элемент ${i + 1}`,
       })),
+      form: false,
     };
+  },
+  setup() {
+    return {
+      selectedModel: selectedModelStore()
+    }
+  },
+  created() {
+    if (this.$route.params.tab) {
+      const 
+    }
+    if (this.$route.params.item) {
+      this.form = true
+      this.selectedModel.selectRow()
+    }
   },
   methods: {
     updateItems(updatedItems) {
