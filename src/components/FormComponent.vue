@@ -1,6 +1,5 @@
 <template>
   <div class="form-wrapper">
-
     <template v-for="field in fields">
       <!-- Текст с ошибкой -->
       <div v-if="field.type == 'text'" class="input-group">
@@ -16,7 +15,7 @@
       <!-- Дата -->
       <div v-if="field.type == 'timestamp'" class="input-group">
         <label :for="field.item">{{field.label}}</label>
-        <DatePicker :id="field.item" v-model="field.value" />
+        <DatePicker :id="field.item" v-model="field.dateValue" @update:modelValue="change(field)" />
       </div>
 
       <!-- Селект -->
@@ -48,11 +47,11 @@
 
       <!-- File -->
       <div v-if="field.type == 'file' || field.type == 'image'" class="input-group">
-        <label :for="field.item">{{field.label}}к</label>
+        <label :for="field.item">{{field.label}}</label>
         <FileUpload
           :id="field.item"
           mode="basic"
-          @select="onFileSelect"
+          @select="onFileSelect($event, field)"
           customUpload
           auto
           severity="secondary"
@@ -65,7 +64,7 @@
       <!-- Writer -->
       <div v-if="field.type == 'writer'" class="input-group">
         <label :for="field.item">{{field.label}}</label>
-        <Editor :id="field.item" v-model="field.value" editorStyle="height: 320px" />
+        <Editor :id="field.item" :key="`${field.item}-${field.value}`" v-model="field.value" editorStyle="height: 320px" />
       </div>
 
       <!-- Long text -->
@@ -74,6 +73,10 @@
         <Textarea :id='field.item' v-model="field.value" rows="5" cols="30" />
       </div>
 
+      <div v-if="field.type == 'sequential'" class="input-group">
+        <label for="block-create">{{field.label}}</label>
+        <BlockCreateComponent :field="field" id="block-create" />
+      </div>
       <!-- Checkbox -->
       <!-- <div v-if="field.type == 'checkbox'" class="input-group">
         <label :for="field.item">{{field.label}}</label>
@@ -118,6 +121,8 @@
       </div> -->
     </template>
 
+    <button @click="save">Save</button>
+
     <!-- <div class="input-group">
       <label for="img-select">Файл аплоуд для доков</label>
       <FileUpload
@@ -131,10 +136,7 @@
         chooseLabel="Выберите файл"
       />
     </div> -->
-    <div class="input-group">
-      <label for="block-create">Авторы мероприятия</label>
-      <BlockCreateComponent id="block-create" />
-    </div>
+    <Toast />
   </div>
 </template>
 
@@ -147,8 +149,22 @@ import {
   Textarea,
   Checkbox,
 } from "primevue";
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
 import Editor from "primevue/editor";
 import BlockCreateComponent from "./BlockCreateComponent.vue";
+import type { FieldDto } from "@/api/modules/base.model";
+import { selectedModelStore } from '../store/selected-model.store';
+import { ref } from "vue";
+
+const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+};
 
 export default {
   name: "FormComponent",
@@ -160,12 +176,14 @@ export default {
     Editor,
     Textarea,
     Checkbox,
-    BlockCreateComponent
+    BlockCreateComponent, 
+    Toast
   },
+  props: ["fields"],
   data() {
     return {
+      selectedModel: selectedModelStore(),
       selectedItems: null,
-      src: null,
       value: "",
       pizza: null,
       items: [
@@ -180,18 +198,66 @@ export default {
         { name: "Spain", code: "ES" },
         { name: "United States", code: "US" },
       ],
+      modelOptions: {}
     };
   },
+  async created() {
+    this.toast = useToast();
+    (await Promise.all(this.fields.map(async f => {
+      if (f.type == 'model-selector') {
+        const data = await f.selectorModel.getAll()
+        const opts = data.getData().map((el: any) => ({
+          name: el.name,
+          value: el.id
+        }))
+        this.modelOptions[f.selectorModel] = opts
+      }
+    })))
+
+  },
   methods: {
-    onFileSelect(event) {
+    change(field) {
+      field.value = field.dateValue.getTime()
+    },
+    async save() {
+      const res = await this.selectedModel.save()
+
+      if (res.success) {
+          this.toast.add({
+            severity: "success",
+            summary: "Форма отправлена",
+            detail: "Создание успешно!",
+            life: 3000,
+          });
+          await this.selectedModel.refreshModel()
+          this.selectedModel.toggleCreation(false)
+      } else {
+          this.toast.add({
+            severity: "error",
+            summary: "Ошибка валидации",
+            detail: "Пожалуйста, проверьте поля формы.",
+            life: 3000,
+          });
+      }
+    },
+    getSelectorOptions(field: FieldDto) {
+      if (field.selectorModel) {
+        return this.modelOptions[field.selectorModel]
+      }
+      return Object.keys(field.selectorOptions ? field.selectorOptions : {}).map(key => ({
+        name: key,
+        value: field.selectorOptions[key]
+      }))
+    },
+    imageSrc(field) {
+      if (!field.value) return null
+
+      field.value
+    },
+    async onFileSelect(event, field: FieldDto) {
       const file = event.files[0];
       const reader = new FileReader();
-
-      reader.onload = async (e) => {
-        this.src = e.target.result;
-      };
-
-      reader.readAsDataURL(file);
+      field.value = (await convertToBase64(file))
     },
   },
 };

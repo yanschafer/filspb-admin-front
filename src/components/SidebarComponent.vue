@@ -46,10 +46,10 @@
       Badge
     },
     methods: {
-      goTo(name) {
+      async goTo(name) {
         if (name == null || name == '') return;
         const selectedModel = selectedModelStore()
-        selectedModel.loadModelByName(name)
+        selectedModel.swapTo(name)
         this.$router.push({ path: `/dashboard/${name}` })
       }
     },

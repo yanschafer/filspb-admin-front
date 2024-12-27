@@ -6,7 +6,7 @@ import BaseModel from "../base.model";
 
 export default class DocumentsModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
-        super('platform', {"name": "Название"}, [
+        super('document', {"name": "Название"}, [
             {item: "name", label: "Название", type: "text"},
             {item: "doc", label: "Файл", type: "file"}
         ])

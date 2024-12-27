@@ -12,8 +12,8 @@ export interface FieldDto {
 }
 
 export default class BaseModel<I, L, C, U> extends ApiModelUtil {
-    constructor(baseRoute: string, public cols: Record<string, string>, fields: FieldDto[]) {
-        super(baseRoute)
+    constructor(baseRoute: string, public cols: Record<string, string>, public fields: FieldDto[]) {
+        super(`/${baseRoute}`)
     }
 
     public async create(createDto: C): Promise<ApiResponseDto<I>> {
@@ -23,44 +23,44 @@ export default class BaseModel<I, L, C, U> extends ApiModelUtil {
     }
 
     public async getAll(): Promise<ApiResponseDto<L[]>> {
-        return new ApiResponseDto(true, [], null) /* this.authorizedRequest(
+        return this.authorizedRequest(
             new ApiRequestDto('', 'GET')
-        )*/
+        )
     }
 
     public async getOne(itemId: number): Promise<ApiResponseDto<I>> {
-        return new ApiResponseDto(true, null, null) /* this.authorizedRequest(
-            new ApiRequestDto(`${itemId}`, 'GET')
-        )*/
+        return this.authorizedRequest(
+            new ApiRequestDto(`/${itemId}`, 'GET')
+        )
     }
 
     public async patch(itemId: number, updateDto: U): Promise<ApiResponseDto<I>> {
         return this.authorizedRequest(
-            new ApiRequestDto(`${itemId}`, 'PATCH', updateDto)
+            new ApiRequestDto(`/${itemId}`, 'PATCH', updateDto)
         )
     }
 
     public async delete(itemId: number): Promise<ApiResponseDto<any>> {
         return this.authorizedRequest(
-            new ApiRequestDto(`${itemId}`, 'DELETE')
+            new ApiRequestDto(`/${itemId}`, 'DELETE')
         )
     }
 
     public async toggleVisibility(itemId: number): Promise<ApiResponseDto<I>> {
         return this.authorizedRequest(
-            new ApiRequestDto(`visible/${itemId}`, 'PATCH')
+            new ApiRequestDto(`/visible/${itemId}`, 'PATCH')
         )
     }
 
     public async positionUp(itemId: number): Promise<ApiResponseDto<I>> {
         return this.authorizedRequest(
-            new ApiRequestDto(`position/${itemId}/up`, 'PATCH')
+            new ApiRequestDto(`/position/${itemId}/up`, 'PATCH')
         )
     }
 
     public async positionDown(itemId: number): Promise<ApiResponseDto<I>> {
         return this.authorizedRequest(
-            new ApiRequestDto(`position/${itemId}/down`, 'PATCH')
+            new ApiRequestDto(`/position/${itemId}/down`, 'PATCH')
         )
     }
 }

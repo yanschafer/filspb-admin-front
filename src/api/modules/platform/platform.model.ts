@@ -7,8 +7,8 @@ import BaseModel from "../base.model";
 export default class PlatfromModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
         super('platform', {"name": "Название", "address": "Адрес"}, [
-            {item: "name", label: "Время", type: "text"},
-            {item: "address", label: "Время", type: "text"},
+            {item: "name", label: "Название", type: "text"},
+            {item: "address", label: "Адрес", type: "text"},
         ])
     }
 }

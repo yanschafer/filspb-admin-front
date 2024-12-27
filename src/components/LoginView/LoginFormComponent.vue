@@ -52,13 +52,14 @@
   </template>
   
   <script>
-  import { reactive, onMounted } from "vue";
   import InputText from "primevue/inputtext";
   import Password from "primevue/password";
   import Button from "primevue/button";
   import Message from "primevue/message";
   import Toast from "primevue/toast";
   import { useToast } from "primevue/usetoast";
+  import { AuthModel } from "@/api/modules/auth/models/auth.model";
+  import AuthInputDto from "@/api/modules/auth/dto/login/auth-input.dto";
   
   export default {
     components: {
@@ -86,15 +87,22 @@
         this.errors.password = this.form.password.trim() ? null : "Пароль обязателен.";
         return !this.errors.username && !this.errors.password;
       },
-      onFormSubmit() {
-        if (this.validateForm()) {
+      async onFormSubmit() {
+        const validation = this.validateForm()
+        let loginRes = {success: false}
+        if (validation) {
+          const authModel = new AuthModel()
+          loginRes = await authModel.auth(new AuthInputDto(this.form.username, this.form.password))
+        }
+
+        if (validation && loginRes.success) {
           this.toast.add({
             severity: "success",
             summary: "Форма отправлена",
             detail: "Вход выполнен успешно!",
             life: 3000,
           });
-          console.log("Данные формы:", this.form);
+          this.$router.push({path: '/dashboard'})
         } else {
           this.toast.add({
             severity: "error",

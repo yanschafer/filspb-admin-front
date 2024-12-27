@@ -6,8 +6,8 @@
             <h1>Добро пожаловать</h1>
             <p>Добро пожаловать в панель управления, выберите в левом меню раздел, который хотите редактировать.</p>
             <ContentComponent />
-            <ListComponent :key="listKey" v-if="!form" @update:items="updateItems" :items="listItems" />
-            <FormComponent :key="formKey" v-else />
+            <FormComponent :key="formKey" v-if="form" :fields="fields" />
+            <ListComponent :key="listKey" v-else @update:items="updateItems" :items="listItems" />
         </div>
     </section>
 </template>
@@ -19,7 +19,6 @@ import ContentComponent from '../components/ContentComponent.vue'
 import ListComponent from '../components/ListComponent.vue'
 import { selectedModelStore } from '../store/selected-model.store';
 import FormComponent from '@/components/FormComponent.vue'
-import { useRoute } from 'vue-router';
 
 
 export default {
@@ -33,39 +32,66 @@ export default {
   data() {
     return {
       listItems: [],
+      fields: [],
       form: false,
+      selectedModel: selectedModelStore(),
+      keyUpdater: Date.now()
     };
   },
   mounted() {
     this.loadRouteView()
+    this.selectedModel.$onAction(async ({ name, args }) => {
+      if (name == 'toggleCreation') {
+        await this.loadRouteView()
+        this.keyUpdater = Date.now()
+        this.form = args[0]
+      }
+      if (name == 'swapTo') {
+        await this.loadData(args[0])
+        this.keyUpdater = Date.now()
+      }
+      if (name == 'swapToEdit') {
+        await this.loadData(args[0], args[1])
+        this.keyUpdater = Date.now()
+      }
+    });
   },
   methods: {
-    loadRouteView() {
-      const selectedModel = selectedModelStore()
-      if (this.$route.params.item) {
+    async loadData(model, row) {
+      if (row) {
         this.form = true
-        selectedModel.selectRow(this.$route.params.tab, parseInt(this.$route.params.item))
-        this.listItems = selectedModel.items;
+        await this.selectedModel.selectRow(model, parseInt(row))
+        this.fields = this.selectedModel.fields
+        this.listItems = this.selectedModel.items
         return
       }
 
-      if (this.$route.params.tab) {
-        selectedModel.loadModelByName(this.$route.params.tab)
-        this.listItems = selectedModel.items;
+      if (model) {
+        await this.selectedModel.loadModelByName(model)
+        this.fields = this.selectedModel.fields
+        console.log(this.fields)
+        this.listItems = this.selectedModel.items
+        console.log(this.listItems)
       }
+    },
+    async loadRouteView() {
+      this.loadData(this.$route.params.tab, this.$route.params.item)
     },
     updateItems(updatedItems) {
       this.listItems = updatedItems;
     },
   },
   computed: {
+    showForm() {
+      return this.form
+    },
     listKey() {
       // this.loadRouteView()
-      return this.$route.path
+      return this.$route.path + `${this.keyUpdater}`
     },
     formKey() {
       // this.loadRouteView()
-      return this.$route.path + "aboba"
+      return this.$route.path + "aboba" + `${this.keyUpdater}`
     }
   }
 };

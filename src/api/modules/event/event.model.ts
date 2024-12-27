@@ -9,10 +9,10 @@ import EventSecondModel from "../event_second/event-second.model";
 export default class EventModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
         super(
-            'platform', 
+            'event', 
             {"date": "Дата", "name": "Название", "time": "Время", "PlatformName": "Площадка", "HallName": "Зал"},
             [
-                {item: "date", label: "Дата", type: "text"},
+                {item: "date", label: "Дата", type: "timestamp"},
                 {item: "time", label: "Время", type: "text"},
                 {item: "eventId", label: "Событие", type: "model-selector", selectorModel: new EventSecondModel()},
                 {item: "hallId", label: "Зал", type: "model-selector", selectorModel: new HallModel()},

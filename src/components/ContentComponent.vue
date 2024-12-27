@@ -1,36 +1,58 @@
+import { selectedModelStore } from '../store/selected-model.store';
 <template>
     <div class="card">
-      <Tabs :value="activeTab">
-        <TabList class="tabs-wrapper">
-          <Tab v-for="tab in items" :key="tab.label" :value="tab.route">
-            <router-link v-if="tab.route" v-slot="{ href, navigate }" :to="tab.route" custom>
-              <a v-ripple :href="href" @click="navigate" class="flex items-center gap-2 text-inherit">
-                <i :class="tab.icon" />
-                <span>{{ tab.label }}</span>
-              </a>
-            </router-link>
-          </Tab>
-        </TabList>
-      </Tabs>
+      <div :class="{'active': listActive}" @click="list">
+        Список
+      </div>
+      <div :class="{'active': !listActive}" @click="create">
+        Создать элемент
+      </div>
     </div>
   </template>
   
-  <script>
+  <script lang="ts">
+  import {selectedModelStore} from '@/store/selected-model.store'
+
   export default {
     name: "ContentComponent",
     data() {
       return {
-        activeTab: "/list", 
-        items: [
-          { route: "/list", label: "Список", icon: "pi pi-list" },
-          { route: "/create", label: "Создать запись", icon: "pi pi-plus" }
-        ]
+        // activeTab: "", 
+        // items: [
+        //   { route: "", label: "Список", icon: "pi pi-list" },
+        //   { route: "create", label: "Создать запись", icon: "pi pi-plus" }
+        // ],
+        selectedModel: selectedModelStore()
       };
+    },
+    methods: {
+      list() {
+        this.$router.push({path: `/dashboard/${this.$route.params.tab}`}).then(el => {
+          this.selectedModel.toggleCreation(false)
+        })
+      },
+      create() {
+        this.$router.push({path: `/dashboard/${this.$route.params.tab}`}).then(() => {
+          this.selectedModel.toggleCreation(true)
+        })
+      }
+    },
+    computed: {
+      listActive() {
+        return !this.selectedModel.creation
+      }
     }
   };
   </script>
   
   <style scoped>
+  div {
+    font-size: 2rem;
+    color: black;
+  }
+  .active {
+    font-size: 3rem;
+  }
   .tabs-wrapper {
     display: flex;
     flex-direction: row;

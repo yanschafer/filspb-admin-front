@@ -20,7 +20,7 @@
       <!-- Поле ID -->
       <Column
         field="id"
-        header="ID"
+        header="#"
         sortable
         filter
         :style="{ width: '10%' }"
@@ -39,7 +39,8 @@
         <template #body="slotProps">
           <div class="action-buttons">
             <button @click="viewItem(slotProps.data)" class="action-btn">
-              <i class="pi pi-eye" />
+              <i v-if="slotProps.data.visible" class="pi pi-eye" />
+              <i v-else class="pi pi-arrow-up" />
             </button>
             <button @click="moveUp(slotProps.data)" class="action-btn">
               <i class="pi pi-arrow-up" />
@@ -126,15 +127,21 @@ export default {
         this.items[index + 1],
         this.items[index],
       ];
-      this.selectedModel.moveRow(item.id)
+      this.selectedModel.moveRowDown(item.id)
       // Оповещаем родительский компонент об изменении
       this.$emit("update:items", [...this.items]);
     }
   },
   viewItem(item) {
-    this.selectedModel.toggleView(item.id)
+    this.selectedModel.toggleCreation(false)
+    item.visible = !item.visible
+    this.$emit(
+      "update:items",
+      this.items
+    );
   },
   editItem(item) {
+    this.selectedModel.swapToEdit(this.$route.params.tab, item.id)
     this.$router.push({path: `/dashboard/${this.$route.params.tab}/${item.id}`})
   },
   deleteItem(item) {

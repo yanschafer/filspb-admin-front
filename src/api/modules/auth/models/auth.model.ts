@@ -3,12 +3,18 @@ import ApiResponseDto from '@/api/dto/api-response.dto';
 import TokenPairDto from '@/api/modules/auth/dto/token-pair.dto';
 import ApiRequestDto from '@/api/dto/api-request.dto';
 import AuthorizedUserDto from '@/api/modules/auth/dto/authorized-user.dto';
-import ApiModelUtil from '@/utils/api-model.util';
 import TokenUtil from '@/utils/token.util';
+import type AdminDto from '../dto/admin.dto';
+import type AdminCreateDto from '../dto/admin-create.dto';
+import type AdminUpdateDto from '../dto/admin-update.dto';
+import BaseModel from '../../base.model';
 
-export class AuthModel extends ApiModelUtil {
+export class AuthModel extends BaseModel<AdminDto, AdminDto, AdminCreateDto, AdminUpdateDto> {
   constructor() {
-    super('');
+    super('', {"login": "Login"}, [
+      {item: "login", label: "Login", type: "text"},
+      {item: "pass", label: "Password", type: "text-hidden"},
+    ]);
   }
 
   public async auth(

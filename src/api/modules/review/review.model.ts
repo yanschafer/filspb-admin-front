@@ -7,7 +7,7 @@ import EventModel from "../event/event.model";
 
 export default class ReviewModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
-        super('platform', {"date": "Дата", "EventName": "Событие", "name": "Имя"}, [
+        super('review', {"date": "Дата", "EventName": "Событие", "name": "Имя"}, [
             {item: "date", label: "Дата", type: "text"},
             {item: "name", label: "Время", type: "text"},
             {item: "review", label: "Время", type: "long-text"},

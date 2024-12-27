@@ -46,12 +46,13 @@
     </div>
   </template>
   
-  <script>
+  <script lang="ts">
   import InputText from 'primevue/inputtext';
   import Button from 'primevue/button';
   import DataTable from 'primevue/datatable';
   import Column from 'primevue/column';
   import Dialog from 'primevue/dialog';
+import { selectedModelStore } from '@/store/selected-model.store';
   
   export default {
     name: 'BlockCreateComponent',
@@ -62,6 +63,9 @@
       Column,
       Dialog
     },
+    props: [
+      "field"
+    ],
     data() {
       return {
         name: '',
@@ -74,43 +78,44 @@
     },
     methods: {
       addPerson() {
+        if (this.field.value == null || !this.field.value) this.field.value = []
         if (this.name.trim() && this.position.trim()) {
-          this.people.push({ id: Date.now(), name: this.name, position: this.position });
+          this.field.value.push({ id: Date.now(), name: this.name, position: this.position });
           this.name = '';
           this.position = '';
         }
       },
       removePerson(item) {
-        this.people = this.people.filter(person => person.id !== item.id);
+        this.field.value = this.field.value.filter(person => person.id !== item.id);
       },
       moveUp(item) {
-        const index = this.people.findIndex(i => i.id === item.id);
+        const index = this.field.value.findIndex(i => i.id === item.id);
         if (index > 0) {
-          [this.people[index - 1], this.people[index]] = [this.people[index], this.people[index - 1]];
-          this.$emit('update:items', [...this.people]);
+          [this.field.value[index - 1], this.field.value[index]] = [this.field.value[index], this.field.value[index - 1]];
+          this.$emit('update:items', [...this.field.value]);
         }
       },
       moveDown(item) {
-        const index = this.people.findIndex(i => i.id === item.id);
-        if (index < this.people.length - 1) {
-          [this.people[index], this.people[index + 1]] = [this.people[index + 1], this.people[index]];
-          this.$emit('update:items', [...this.people]);
+        const index = this.field.value.findIndex(i => i.id === item.id);
+        if (index < this.field.value.length - 1) {
+          [this.field.value[index], this.field.value[index + 1]] = [this.field.value[index + 1], this.field.value[index]];
+          this.$emit('update:items', [...this.field.value]);
         }
       },
       isFirst(item) {
-        return this.people[0] === item;
+        return this.field.value[0] === item;
       },
       isLast(item) {
-        return this.people[this.people.length - 1] === item;
+        return this.field.value[this.field.value.length - 1] === item;
       },
       editPerson(item) {
-        this.editingIndex = this.people.findIndex(person => person.id === item.id);
+        this.editingIndex = this.field.value.findIndex(person => person.id === item.id);
         this.editedPerson = { ...item };
         this.isEditing = true;
       },
       saveEdit() {
         if (this.editingIndex !== null) {
-          this.$set(this.people, this.editingIndex, { ...this.editedPerson });
+          this.$set(this.field.value, this.editingIndex, { ...this.editedPerson });
           this.isEditing = false;
         }
       }
