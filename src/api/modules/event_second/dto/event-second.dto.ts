@@ -7,6 +7,8 @@ export default class EventSecondDto {
         public shortDescription: string,
         public time: string,
         public description: string,
+        public authors: string,
+        public tags: number[],
         public visible: boolean,
         public position: number
     ) {}

@@ -12,7 +12,7 @@ export interface FieldDto {
 }
 
 export default class BaseModel<I, L, C, U> extends ApiModelUtil {
-    constructor(baseRoute: string, public cols: Record<string, string>, public fields: FieldDto[]) {
+    constructor(baseRoute: string, public cols: Record<string, string>, public fields: FieldDto[], public showControls: boolean = true) {
         super(`/${baseRoute}`)
     }
 

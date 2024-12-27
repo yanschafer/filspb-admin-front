@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '@/views/LoginView.vue'
 import DashboardView from '@/views/DashboardView.vue'
+import DashboardSettingsView from '@/views/DashboardSettingsView.vue'
 import TokenUtil from '@/utils/token.util'
 
 const router = createRouter({
@@ -12,6 +13,11 @@ const router = createRouter({
       component: LoginView,
     },
     {
+      path: '/dashboard',
+      name: 'dash_settings',
+      component: DashboardSettingsView
+    },
+    {
       path: '/dashboard/:tab',
       name: 'dashboard',
       component: DashboardView,
@@ -20,7 +26,7 @@ const router = createRouter({
       path: '/dashboard/:tab/:item',
       name: 'dashboard_concrete',
       component: DashboardView,
-    },
+    }
   ],
 })
 
@@ -31,8 +37,8 @@ router.beforeEach((to, from, next) => {
     return
   }
 
-  if (to.path == "/dashboard/" || to.path == '/dashboard' || (to.path == '/login' && TokenUtil.isAuthorized())) {
-      next({path: '/dashboard/affiche'})
+  if (to.path == '/login' && TokenUtil.isAuthorized()) {
+      next({path: '/dashboard'})
       return
   }
 

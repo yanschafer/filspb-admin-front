@@ -17,6 +17,7 @@ import DocumentsModel from "@/api/modules/documents/documents.model";
 import EventModel from "@/api/modules/event/event.model";
 import ReviewModel from "@/api/modules/review/review.model";
 import EventSecondModel from "@/api/modules/event_second/event-second.model";
+import { AdminsModel } from "@/api/modules/auth/models/admins.model";
 
 export const selectedModelStore = defineStore("SelectedModel", {
     state: () => ({
@@ -30,6 +31,7 @@ export const selectedModelStore = defineStore("SelectedModel", {
             selectorModel: new BaseModel("", {}, []),
             selectorOptions: []
         }],
+        showPositionAndVisibilityControls: true,
         selectedItem: {},
         tabToModel: {
             'affiche': () => new EventModel(),
@@ -46,7 +48,8 @@ export const selectedModelStore = defineStore("SelectedModel", {
             'employee-contacts': () => new PeopleContactsModel(),
             'dep-contacts': () => new DepartmentContactsModel(),
             'news': () => new NewsModel(),
-            'partners': () => new PartnersModel()
+            'partners': () => new PartnersModel(),
+            'admins': () => new AdminsModel()
         },
         modelName: "",
         creation: false,
@@ -71,6 +74,7 @@ export const selectedModelStore = defineStore("SelectedModel", {
             }))
             this.model = model
             this.fields = model.fields
+            this.showPositionAndVisibilityControls = model.showControls
             const getAllRes = await model.getAll()
 
             if (!getAllRes.success)
@@ -97,6 +101,9 @@ export const selectedModelStore = defineStore("SelectedModel", {
                 el.value = this.selectedItem[el.item]
                 if (el.type == 'timestamp') {
                     el.dateValue = new Date(this.selectedItem[el.item])
+                }
+                if (el.type == 'sequential') {
+                    el.value = JSON.parse(this.selectedItem[el.item])
                 }
                 return el
             })
@@ -129,7 +136,11 @@ export const selectedModelStore = defineStore("SelectedModel", {
             
             this.fields.forEach(el => {
                 if (el.value) {
-                    buildObject[el.item] = el.value
+                    if (el.type == 'sequential') {
+                        buildObject[el.item] = JSON.stringify(el.value)
+                    } else {
+                        buildObject[el.item] = el.value
+                    }
                 }
             })
             

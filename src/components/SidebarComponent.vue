@@ -48,9 +48,14 @@
     methods: {
       async goTo(name) {
         if (name == null || name == '') return;
+        if (name == 'settings') {
+          this.$router.push({ path: `/dashboard` })
+          return
+        }
         const selectedModel = selectedModelStore()
-        selectedModel.swapTo(name)
-        this.$router.push({ path: `/dashboard/${name}` })
+        this.$router.push({ path: `/dashboard/${name}` }).then(() => {
+          selectedModel.toggleCreation(false)
+        })
       }
     },
     data() {

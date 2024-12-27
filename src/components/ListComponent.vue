@@ -38,20 +38,20 @@
       <Column header="Управление" :style="{ width: '10%' }">
         <template #body="slotProps">
           <div class="action-buttons">
-            <button @click="viewItem(slotProps.data)" class="action-btn">
+            <button v-if="showControls" @click="viewItem(slotProps.data)" class="action-btn">
               <i v-if="slotProps.data.visible" class="pi pi-eye" />
               <i v-else class="pi pi-arrow-up" />
             </button>
-            <button @click="moveUp(slotProps.data)" class="action-btn">
+            <button v-if="showControls" @click="moveUp(slotProps.data)" class="action-btn">
               <i class="pi pi-arrow-up" />
             </button>
-            <button @click="moveDown(slotProps.data)" class="action-btn">
+            <button v-if="showControls" @click="moveDown(slotProps.data)" class="action-btn">
               <i class="pi pi-arrow-down" />
             </button>
             <button @click="editItem(slotProps.data)" class="action-btn">
               <i class="pi pi-pencil" />
             </button>
-            <button @click="deleteItem(slotProps.data)" class="action-btn">
+            <button v-if="showDelete" @click="deleteItem(slotProps.data)" class="action-btn">
               <i class="pi pi-trash" />
             </button>
           </div>
@@ -78,11 +78,11 @@ export default {
     items: {
       type: Array,
       required: true,
-    },
+    }
   },
   setup() {
     return {
-      selectedModel: selectedModelStore()
+      selectedModel: selectedModelStore(),
     }
   },
   data() {
@@ -103,6 +103,12 @@ export default {
     },
     fields() {
       return this.selectedModel.cols
+    },
+    showControls() {
+      return this.selectedModel.showPositionAndVisibilityControls
+    },
+    showDelete() {
+      return this.selectedModel.modelName != "admins" || this.items.length > 1
     }
   },
   methods: {

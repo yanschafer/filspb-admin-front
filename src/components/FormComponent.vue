@@ -12,6 +12,18 @@
         />
       </div>
 
+      <!-- Для паролей -->
+      <div v-if="field.type == 'text-hidden'" class="input-group">
+        <label :for="field.item">{{ field.label }}</label>
+        <InputText
+          type="password"
+          :id="field.item"
+          v-model="field.value"
+          :invalid="!field.value"
+          :placeholder="field.label"
+        />
+      </div>
+
       <!-- Дата -->
       <div v-if="field.type == 'timestamp'" class="input-group">
         <label :for="field.item">{{field.label}}</label>
@@ -78,47 +90,15 @@
         <BlockCreateComponent :field="field" id="block-create" />
       </div>
       <!-- Checkbox -->
-      <!-- <div v-if="field.type == 'checkbox'" class="input-group">
-        <label :for="field.item">{{field.label}}</label>
-        <div class="checkbox-wrapper">
-          <div class="checkbox-single">
-            <Checkbox
-              v-model="pizza"
-              inputId="ingredient1"
-              name="pizza"
-              value="Cheese"
-            />
-            <label for="ingredient1"> Cheese </label>
-          </div>
-          <div class="checkbox-single">
-            <Checkbox
-              v-model="pizza"
-              inputId="ingredient1"
-              name="pizza"
-              value="Cheese"
-            />
-            <label for="ingredient1"> Cheese </label>
-          </div>
-          <div class="checkbox-single">
-            <Checkbox
-              v-model="pizza"
-              inputId="ingredient1"
-              name="pizza"
-              value="Cheese"
-            />
-            <label for="ingredient1"> Cheese </label>
-          </div>
-          <div class="checkbox-single">
-            <Checkbox
-              v-model="pizza"
-              inputId="ingredient1"
-              name="pizza"
-              value="Cheese"
-            />
-            <label for="ingredient1"> Cheese </label>
-          </div>
-        </div>
-      </div> -->
+      <div v-if="field.type == 'checkbox-multi'" class="input-group">
+        <CheckboxMulti 
+          :item="field.item"
+          :label="field.label"
+          :checked="field.value"
+          :opts="getSelectorOptions(field)"
+          @updated="checkboxUpdated($event, field)"
+        />
+      </div>
     </template>
 
     <button @click="save">Save</button>
@@ -156,6 +136,7 @@ import BlockCreateComponent from "./BlockCreateComponent.vue";
 import type { FieldDto } from "@/api/modules/base.model";
 import { selectedModelStore } from '../store/selected-model.store';
 import { ref } from "vue";
+import CheckboxMulti from "./CheckboxMulti.vue";
 
 const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -177,9 +158,10 @@ export default {
     Textarea,
     Checkbox,
     BlockCreateComponent, 
+    CheckboxMulti,
     Toast
   },
-  props: ["fields"],
+  props: ["fields", "modelOptions"],
   data() {
     return {
       selectedModel: selectedModelStore(),
@@ -197,23 +179,11 @@ export default {
         { name: "Japan", code: "JP" },
         { name: "Spain", code: "ES" },
         { name: "United States", code: "US" },
-      ],
-      modelOptions: {}
+      ]
     };
   },
   async created() {
     this.toast = useToast();
-    (await Promise.all(this.fields.map(async f => {
-      if (f.type == 'model-selector') {
-        const data = await f.selectorModel.getAll()
-        const opts = data.getData().map((el: any) => ({
-          name: el.name,
-          value: el.id
-        }))
-        this.modelOptions[f.selectorModel] = opts
-      }
-    })))
-
   },
   methods: {
     change(field) {
@@ -230,7 +200,9 @@ export default {
             life: 3000,
           });
           await this.selectedModel.refreshModel()
-          this.selectedModel.toggleCreation(false)
+          this.$router.push({path: `/dashboard/${this.$route.params.tab}`}).then(() => {
+            this.selectedModel.toggleCreation(false)
+          })
       } else {
           this.toast.add({
             severity: "error",
@@ -242,12 +214,17 @@ export default {
     },
     getSelectorOptions(field: FieldDto) {
       if (field.selectorModel) {
-        return this.modelOptions[field.selectorModel]
+        const res = this.modelOptions[field.selectorModel]
+        if (res) return res
+        else return []
       }
       return Object.keys(field.selectorOptions ? field.selectorOptions : {}).map(key => ({
         name: key,
         value: field.selectorOptions[key]
       }))
+    },
+    checkboxUpdated(e, field) {
+      field.value = e.map(parseInt)
     },
     imageSrc(field) {
       if (!field.value) return null

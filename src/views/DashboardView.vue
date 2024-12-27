@@ -6,7 +6,7 @@
             <h1>Добро пожаловать</h1>
             <p>Добро пожаловать в панель управления, выберите в левом меню раздел, который хотите редактировать.</p>
             <ContentComponent />
-            <FormComponent :key="formKey" v-if="form" :fields="fields" />
+            <FormComponent :key="formKey" v-if="form" :fields="fields" :model-options="modelOptions" />
             <ListComponent :key="listKey" v-else @update:items="updateItems" :items="listItems" />
         </div>
     </section>
@@ -33,6 +33,7 @@ export default {
     return {
       listItems: [],
       fields: [],
+      modelOptions: {},
       form: false,
       selectedModel: selectedModelStore(),
       keyUpdater: Date.now()
@@ -63,6 +64,16 @@ export default {
         await this.selectedModel.selectRow(model, parseInt(row))
         this.fields = this.selectedModel.fields
         this.listItems = this.selectedModel.items
+        await Promise.all(this.fields.map(async f => {
+          if (f.type == 'model-selector' || (f.type == 'checkbox-multi' && f.selectorModel)) {
+            const data = await f.selectorModel.getAll()
+            const opts = data.getData().map((el) => ({
+              name: el.name,
+              value: el.id
+            }))
+            this.modelOptions[f.selectorModel] = opts
+          }
+        }))
         return
       }
 
