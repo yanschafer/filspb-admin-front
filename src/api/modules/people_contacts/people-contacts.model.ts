@@ -6,8 +6,8 @@ import BaseModel from "../base.model";
 
 export default class PeopleContactsModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
-        super('people/contacts', {"surname": "Фамилия", "io": "ИО"}, [
-            {item: "surname", label: "Фамилия", type: "text"},
+        super('people/contacts', {"surname": "ФИО", "workPosition": "Должность"}, [
+            {item: "surname", label: "ФИО", type: "text"},
             {item: "io", label: "ИО", type: "text"},
             {item: "photo", label: "Фото", type: "image"},
             {item: "workPosition", label: "Должность", type: "text"},
