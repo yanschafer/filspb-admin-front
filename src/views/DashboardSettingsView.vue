@@ -5,7 +5,7 @@
         <div class="content">
             <h1>Добро пожаловать</h1>
             <p>Добро пожаловать в панель управления, выберите в левом меню раздел, который хотите редактировать.</p>
-            <FormComponent :fields="fields" />
+            <FormComponent :fields="fields" :no-redirect="true" />
             <!-- <ContentComponent /> -->
             <!-- <ListComponent :key="listKey" v-else @update:items="updateItems" :items="listItems" /> -->
         </div>
@@ -17,9 +17,9 @@ import HeaderComponent from '../components/HeaderComponent.vue'
 import SidebarComponent from "../components/SidebarComponent.vue"
 import ContentComponent from '../components/ContentComponent.vue'
 import ListComponent from '../components/ListComponent.vue'
-import { selectedModelStore } from '../store/selected-model.store';
 import FormComponent from '@/components/FormComponent.vue'
 import SystemConfigurationModel from '@/api/modules/system_configuration/system-configuration.model';
+import { selectedModelStore } from '@/store/selected-model.store'
 
 
 export default {
@@ -35,16 +35,21 @@ export default {
       listItems: [],
       fields: [],
       form: false,
+      selectedModelStore: selectedModelStore(),
       model: new SystemConfigurationModel(),
     };
   },
   async mounted() {
     const data = (await this.model.getOne(1)).getData();
+    this.selectedModelStore.model = this.model
     this.fields = this.model.fields.map(el => {
         if (data[el.item])
             el.value = data[el.item]
         return el
     })
+    this.selectedModelStore.fields = this.fields
+    this.selectedModelStore.creation = false
+    this.selectedModelStore.selectedItem = {id: 1}
   },
   methods: {
   },

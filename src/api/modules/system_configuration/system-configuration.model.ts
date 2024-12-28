@@ -23,7 +23,7 @@ export default class SystemConfigurationModel extends BaseModel<Dto, ListDto, Cr
             {item: "email", label: "Email", type: "text"},
             {item: "address", label: "Адрес", type: "text"},
             {item: "city", label: "Город", type: "text"},
-            {item: "addressSHort", label: "Короткий адрес", type: "text"},
+            {item: "addressShort", label: "Короткий адрес", type: "text"},
             {item: "vk", label: "VK", type: "text"},
             {item: "telegram", label: "Telegram", type: "text"},
             {item: "soundCloud", label: "Sound Cloud", type: "text"},

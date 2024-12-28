@@ -64,7 +64,6 @@ export const selectedModelStore = defineStore("SelectedModel", {
             this.cols = {}
             this.fields = []
             this.modelName = name
-            console.log("CLEARED")
             return await this.loadModel(this.tabToModel[name]())
         },
         async loadModel<I, L, C, U>(model: BaseModel<I, L, C, U>) {
@@ -75,6 +74,7 @@ export const selectedModelStore = defineStore("SelectedModel", {
             this.model = model
             this.fields = model.fields
             this.showPositionAndVisibilityControls = model.showControls
+
             const getAllRes = await model.getAll()
 
             if (!getAllRes.success)
@@ -82,8 +82,6 @@ export const selectedModelStore = defineStore("SelectedModel", {
             
             this.items = getAllRes.getData()
 
-            console.log("LOADED", this.model, this.fields, this.items, this.cols)
-            
             return getAllRes
         },
         async selectRow<I, L, C, U>(modelName: string, id: any) {

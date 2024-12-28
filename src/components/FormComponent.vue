@@ -176,7 +176,7 @@ export default {
     CheckboxMulti,
     Toast
   },
-  props: ["fields", "modelOptions"],
+  props: ["fields", "modelOptions", "noRedirect"],
   data() {
     return {
       selectedModel: selectedModelStore(),
@@ -211,13 +211,15 @@ export default {
           this.toast.add({
             severity: "success",
             summary: "Форма отправлена",
-            detail: "Создание успешно!",
+            detail: "Данные сохранены!",
             life: 3000,
           });
-          await this.selectedModel.refreshModel()
-          this.$router.push({path: `/dashboard/${this.$route.params.tab}`}).then(() => {
-            this.selectedModel.toggleCreation(false)
-          })
+          if (!this.noRedirect) {
+            await this.selectedModel.refreshModel()
+            this.$router.push({path: `/dashboard/${this.$route.params.tab}`}).then(() => {
+              this.selectedModel.toggleCreation(false)
+            })
+          }
       } else {
           this.toast.add({
             severity: "error",
