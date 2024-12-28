@@ -90,7 +90,7 @@
       <!-- Writer -->
       <div v-if="field.type == 'writer'" class="input-group">
         <label :for="field.item">{{field.label}}</label>
-        <Editor :id="field.item" :key="`${field.item}-${field.value}`" v-model="field.value" editorStyle="height: 320px" />
+        <Editor :id="field.item" v-model="field.value" editorStyle="height: 320px" />
       </div>
 
       <!-- Long text -->

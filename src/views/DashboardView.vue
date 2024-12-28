@@ -44,6 +44,7 @@ export default {
     this.selectedModel.$onAction(async ({ name, args }) => {
       if (name == 'toggleCreation') {
         await this.loadRouteView()
+        this.fields = this.fields.map(el => el.type == 'writer' ? {...el, value: ""} : el)
         this.keyUpdater = Date.now()
         this.form = args[0]
       }
