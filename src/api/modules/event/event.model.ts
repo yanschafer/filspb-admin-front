@@ -10,7 +10,7 @@ export default class EventModel extends BaseModel<Dto, ListDto, CreateDto, Updat
     constructor() {
         super(
             'event', 
-            {"date": "Дата", "name": "Название", "time": "Время", "PlatformName": "Площадка", "HallName": "Зал"},
+            {"date": "Дата", "EventSecondName": "Название", "time": "Время", "PlatformName": "Площадка", "HallName": "Зал"},
             [
                 {item: "date", label: "Дата", type: "timestamp"},
                 {item: "time", label: "Время", type: "text"},

@@ -24,6 +24,19 @@
         />
       </div>
 
+
+      <!-- Для чисел -->
+      <div v-if="field.type == 'text-number'" class="input-group">
+        <label :for="field.item">{{ field.label }}</label>
+        <InputText
+          type="password"
+          :id="field.item"
+          v-model.number="field.value"
+          :invalid="!field.value"
+          :placeholder="field.label"
+        />
+      </div>
+
       <!-- Дата -->
       <div v-if="field.type == 'timestamp'" class="input-group">
         <label :for="field.item">{{field.label}}</label>
@@ -70,7 +83,8 @@
           class="p-button-outlined"
           :chooseLabel="field.type == 'image' ? 'Выбрать изображение' : 'Выбрать файл'"
         />
-        <img v-if="field.value && field.type == 'image'" :src="field.value" alt="Image" class="img-preview" />
+        <img v-if="field.value && field.type == 'image'" :src="getImageSource(field.value)" alt="Image" class="img-preview" />
+        <a v-else @click="downloadFile(field.value)" href="#">{{ getLoadedFilePreview(field) }}</a>
       </div>
 
       <!-- Writer -->
@@ -137,6 +151,7 @@ import type { FieldDto } from "@/api/modules/base.model";
 import { selectedModelStore } from '../store/selected-model.store';
 import { ref } from "vue";
 import CheckboxMulti from "./CheckboxMulti.vue";
+import appConf from "@/api/conf/app.conf";
 
 const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -213,15 +228,36 @@ export default {
       }
     },
     getSelectorOptions(field: FieldDto) {
-      if (field.selectorModel) {
-        const res = this.modelOptions[field.selectorModel]
-        if (res) return res
-        else return []
-      }
-      return Object.keys(field.selectorOptions ? field.selectorOptions : {}).map(key => ({
-        name: key,
-        value: field.selectorOptions[key]
-      }))
+      const res = this.modelOptions[field.item]
+      console.log("SELECTOR DATA")
+      console.log(field.value)
+      console.log(this.modelOptions)
+      console.log(res)
+      if (res) return res
+      else return []
+    },
+    getImageSource(value: string) {
+      if (value[0] != "/")
+        return value
+      else
+        return `${appConf.proto}://${appConf.endpoint}/files${value}`
+    },
+    getLoadedFilePreview(field: FieldDto) {
+      if (field.value[0] == "/") return field.value
+      if (field.docName) return field.docName
+      else field.value
+    },
+    async downloadFile(fileName: string) {
+      const response = await fetch(`${appConf.proto}://${appConf.endpoint}/files${fileName}`);
+      if (!response.ok) throw new Error('Network response was not ok');
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob); 
+      link.download = fileName.split('/')[fileName.split('/').length - 1]
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
     },
     checkboxUpdated(e, field) {
       field.value = e.map(parseInt)
@@ -233,8 +269,11 @@ export default {
     },
     async onFileSelect(event, field: FieldDto) {
       const file = event.files[0];
-      const reader = new FileReader();
       field.value = (await convertToBase64(file))
+      if (field.type == 'file') {
+        field.docName = file.name
+        field.value = field.value.split("base64,")[1] 
+      }
     },
   },
 };

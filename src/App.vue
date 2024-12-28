@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-import { useToast } from "primevue/usetoast";
+import { RouterView } from 'vue-router'
 import Toast from 'primevue/toast';
 </script>
 

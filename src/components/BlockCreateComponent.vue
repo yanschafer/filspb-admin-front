@@ -46,13 +46,13 @@
     </div>
   </template>
   
-  <script lang="ts">
+<script lang="ts">
   import InputText from 'primevue/inputtext';
   import Button from 'primevue/button';
   import DataTable from 'primevue/datatable';
   import Column from 'primevue/column';
   import Dialog from 'primevue/dialog';
-import { selectedModelStore } from '@/store/selected-model.store';
+  import { selectedModelStore } from '@/store/selected-model.store';
   
   export default {
     name: 'BlockCreateComponent',

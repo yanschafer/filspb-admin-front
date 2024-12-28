@@ -58,31 +58,41 @@ export default {
     });
   },
   methods: {
-    async loadData(model, row) {
-      if (row) {
-        this.form = true
-        await this.selectedModel.selectRow(model, parseInt(row))
-        this.fields = this.selectedModel.fields
-        this.listItems = this.selectedModel.items
-        await Promise.all(this.fields.map(async f => {
+    async loadSelectors() {
+      await Promise.all(this.fields.map(async f => {
           if (f.type == 'model-selector' || (f.type == 'checkbox-multi' && f.selectorModel)) {
             const data = await f.selectorModel.getAll()
             const opts = data.getData().map((el) => ({
               name: el.name,
               value: el.id
             }))
-            this.modelOptions[f.selectorModel] = opts
+            this.modelOptions[f.item] = opts
+          } else if (f.type == 'selector') {
+            this.modelOptions[f.item] = Object.keys(f.selectorOptions).map(key => ({
+              name: key,
+              value: f.selectorOptions[key]
+            }))
           }
         }))
+      
+    },
+    async loadData(model, row) {
+      if (row) {
+        this.form = true
+        await this.selectedModel.selectRow(model, parseInt(row))
+        this.fields = this.selectedModel.fields
+        this.listItems = this.selectedModel.items
+        await this.loadSelectors()
+        this.selectedModel.updateSelectorFields(this.modelOptions)
         return
       }
 
       if (model) {
         await this.selectedModel.loadModelByName(model)
         this.fields = this.selectedModel.fields
-        console.log(this.fields)
         this.listItems = this.selectedModel.items
-        console.log(this.listItems)
+        await this.loadSelectors()
+        this.selectedModel.updateSelectorFields(this.modelOptions)
       }
     },
     async loadRouteView() {

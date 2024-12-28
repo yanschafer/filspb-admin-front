@@ -110,6 +110,14 @@ export const selectedModelStore = defineStore("SelectedModel", {
 
             return getOneRes
         },
+        updateSelectorFields(modelOptions: any) {
+            this.fields = this.fields.map(el => {
+                if ((el.type == 'model-selector' || el.type == 'selector') && el.value) {
+                    el.value = modelOptions[el.item].filter(i => el.value == i.value)[0]
+                }
+                return el
+            })
+        },
         toggleCreation(creation: boolean) {
             this.creation = creation
         },
@@ -140,6 +148,12 @@ export const selectedModelStore = defineStore("SelectedModel", {
                         buildObject[el.item] = JSON.stringify(el.value)
                     } else {
                         buildObject[el.item] = el.value
+                    }
+                    if (el.type == 'file') {
+                        buildObject["docName"] = el.docName
+                    }
+                    if (el.type == 'selector' || el.type == 'model-selector') {
+                        buildObject[el.item] = el.value.value
                     }
                 }
             })
