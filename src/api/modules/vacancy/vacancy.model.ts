@@ -7,9 +7,9 @@ import BaseModel from "../base.model";
 export default class VacancyModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
         super('vacancy', {"name": "Название"}, [
-            {item: "name", label: "Время", type: "text"},
-            {item: "image", label: "Время", type: "image"},
-            {item: "description", label: "Время", type: "writer"},
+            {item: "name", label: "Название", type: "text"},
+            {item: "image", label: "Изображение", type: "image"},
+            {item: "description", label: "Описание", type: "writer"},
         ])
     }
 }

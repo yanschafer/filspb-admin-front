@@ -8,9 +8,8 @@ import PlatfromModel from "../platform/platform.model";
 export default class HallModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
         super('hall',  {"name": "Название"}, [
-            {item: "date", label: "Дата", type: "text"},
-            {item: "name", label: "Время", type: "text"},
             {item: "platform", label: "Площадка", type: "model-selector", selectorModel: new PlatfromModel()},
+            {item: "name", label: "Название", type: "text"},
         ])
     }
 }

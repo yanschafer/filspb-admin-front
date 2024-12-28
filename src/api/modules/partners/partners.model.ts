@@ -7,8 +7,8 @@ import BaseModel from "../base.model";
 export default class PartnersModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
         super('partners',  {"name": "Название", "image": "Логотип"}, [
-            {item: "name", label: "Время", type: "text"},
-            {item: "image", label: "Время", type: "image"},
+            {item: "name", label: "Название", type: "text"},
+            {item: "image", label: "Логотип", type: "image"},
         ])
     }
 }
