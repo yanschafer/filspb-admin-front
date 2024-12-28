@@ -8,11 +8,11 @@ export default class NewsModel extends BaseModel<Dto, ListDto, CreateDto, Update
     constructor() {
         super('news', {"name": "Название"}, [
             {item: "date", label: "Дата", type: "text"},
-            {item: "name", label: "Время", type: "text"},
-            {item: "image", label: "Время", type: "image"},
-            {item: "shortDescription", label: "Время", type: "long-text"},
-            {item: "description", label: "Время", type: "writer"},
-            {item: "authors", label: "Авторы", type: "sequential"}
+            {item: "name", label: "Название", type: "text"},
+            {item: "image", label: "Изображение", type: "image"},
+            {item: "shortDescription", label: "Краткий текст новости", type: "long-text"},
+            {item: "description", label: "Полный текст новости", type: "writer"},
+            // {item: "authors", label: "Авторы", type: "sequential"}
         ])
     }
 }

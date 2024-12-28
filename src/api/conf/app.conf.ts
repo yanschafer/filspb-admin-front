@@ -1,8 +1,8 @@
 import { LogLevel } from "@/utils/logger/log-level";
 
 export default {
-    endpoint: "localhost:8090",
-    proto: "http",
+    proto: "https",
+    endpoint: 'filspb.dudosyka.ru',
     refreshEndpoint: "/auth/refresh",
     loggerLevel: LogLevel.DEBUG,
     loggerExcludedPrefixes: [],

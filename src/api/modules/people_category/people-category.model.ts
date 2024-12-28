@@ -7,7 +7,7 @@ import BaseModel from "../base.model";
 export default class PeopleCategoryModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
         super('people/category', {"name": "Название"}, [
-            {item: "name", label: "Время", type: "text"},
+            {item: "name", label: "Название категории", type: "text"},
         ])
     }
 }
