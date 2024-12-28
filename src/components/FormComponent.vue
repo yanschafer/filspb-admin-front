@@ -243,6 +243,7 @@ export default {
         return `${appConf.proto}://${appConf.endpoint}/files${value}`
     },
     getLoadedFilePreview(field: FieldDto) {
+      if (!field.value) return null
       if (field.value[0] == "/") return field.value
       if (field.docName) return field.docName
       else field.value
