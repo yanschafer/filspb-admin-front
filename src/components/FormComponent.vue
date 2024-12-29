@@ -222,9 +222,7 @@ export default {
           });
           if (!this.noRedirect) {
             await this.selectedModel.refreshModel()
-            this.$router.push({path: `/dashboard/${this.$route.params.tab}`}).then(() => {
-              this.selectedModel.toggleCreation(false)
-            })
+            this.$router.push({path: `/dashboard/${this.$route.params.tab}`})
           }
       } else {
           this.toast.add({

@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '@/views/LoginView.vue'
 import DashboardView from '@/views/DashboardView.vue'
+import DashboardCreateView from '@/views/DashboardCreateView.vue'
+import DashboardEditView from '@/views/DashboardEditView.vue'
 import DashboardSettingsView from '@/views/DashboardSettingsView.vue'
 import TokenUtil from '@/utils/token.util'
 
@@ -23,9 +25,14 @@ const router = createRouter({
       component: DashboardView,
     },
     {
-      path: '/dashboard/:tab/:item',
-      name: 'dashboard_concrete',
-      component: DashboardView,
+      path: '/dashboard/:tab/create',
+      name: 'dashboard create',
+      component: DashboardCreateView,
+    },
+    {
+      path: '/dashboard/:tab/edit/:item',
+      name: 'dashboard edit',
+      component: DashboardEditView,
     }
   ],
 })

@@ -58,7 +58,6 @@
 </template>
 
 <script>
-import { ref } from "vue";
 import PanelMenu from "primevue/panelmenu";
 import Badge from "primevue/badge";
 import { selectedModelStore } from "../store/selected-model.store";
@@ -77,9 +76,7 @@ export default {
       if (name === "settings") {
         this.$router.push({ path: "/dashboard" });
       } else {
-        this.$router.push({ path: `/dashboard/${name}` }).then(() => {
-          selectedModel.toggleCreation(false);
-        });
+        this.$router.push({ path: `/dashboard/${name}` }).finally(() => selectedModel.swap())
       }
     },
     isActive(route) {

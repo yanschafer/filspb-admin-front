@@ -4,9 +4,10 @@
         <SidebarComponent />
         <div class="content animate__animated animate__fadeIn">
             <h1>Добро пожаловать</h1>
-            <ContentComponent />
-            <FormComponent :key="formKey" v-if="form" :fields="fields" :model-options="modelOptions" />
-            <ListComponent :key="listKey" v-else @update:items="updateItems" :items="listItems" />
+            <div @click="$router.push({path: `/dashboard/${$route.params.tab}/create`})">
+              Создать элемент
+            </div>
+            <ListComponent @update:items="updateItems" :items="listItems" />
         </div>
     </section>
 </template>
@@ -14,106 +15,49 @@
 <script>
 import HeaderComponent from '../components/HeaderComponent.vue'
 import SidebarComponent from "../components/SidebarComponent.vue"
-import ContentComponent from '../components/ContentComponent.vue'
-import ListComponent from '../components/ListComponent.vue'
-import { selectedModelStore } from '../store/selected-model.store';
-import FormComponent from '@/components/FormComponent.vue'
+import ListComponent from '@/components/ListComponent.vue';
+import { selectedModelStore } from '@/store/selected-model.store';
 
 
 export default {
   components: {
     HeaderComponent,
     SidebarComponent,
-    ContentComponent,
-    ListComponent,
-    FormComponent
+    ListComponent
   },
   data() {
     return {
       listItems: [],
       fields: [],
       modelOptions: {},
-      form: false,
       selectedModel: selectedModelStore(),
-      keyUpdater: Date.now()
+      keyUpdater: Date.now(),
+      model: ''
     };
   },
-  mounted() {
-    this.loadRouteView()
-    this.selectedModel.$onAction(async ({ name, args }) => {
-      if (name == 'toggleCreation') {
-        await this.loadRouteView()
-        this.fields = this.fields.map(el => el.type == 'writer' ? {...el, value: ""} : el)
-        this.keyUpdater = Date.now()
-        this.form = args[0]
-      }
-      if (name == 'swapTo') {
-        await this.loadData(args[0])
-        this.keyUpdater = Date.now()
-      }
-      if (name == 'swapToEdit') {
-        await this.loadData(args[0], args[1])
-        this.keyUpdater = Date.now()
-      }
-    });
+  created() {
+    this.load()
+    this.selectedModel.$onAction(({name, args}) => {
+      if (name == 'swap')
+        this.load()
+    })
   },
   methods: {
-    async loadSelectors() {
-      await Promise.all(this.fields.map(async f => {
-          if (f.type == 'model-selector' || (f.type == 'checkbox-multi' && f.selectorModel)) {
-            const data = await f.selectorModel.getAll()
-            const opts = data.getData().map((el) => ({
-              name: el.name,
-              value: el.id
-            }))
-            this.modelOptions[f.item] = opts
-          } else if (f.type == 'selector') {
-            this.modelOptions[f.item] = Object.keys(f.selectorOptions).map(key => ({
-              name: key,
-              value: f.selectorOptions[key]
-            }))
-          }
-        }))
-      
-    },
-    async loadData(model, row) {
-      if (row) {
-        this.form = true
-        await this.selectedModel.selectRow(model, parseInt(row))
+    load() {
+      this.selectedModel.loadModelByName(this.$route.params.tab).finally(() => {
         this.fields = this.selectedModel.fields
         this.listItems = this.selectedModel.items
-        await this.loadSelectors()
-        this.selectedModel.updateSelectorFields(this.modelOptions)
-        return
-      }
-
-      if (model) {
-        await this.selectedModel.loadModelByName(model)
-        this.fields = this.selectedModel.fields
-        this.listItems = this.selectedModel.items
-        await this.loadSelectors()
-        this.selectedModel.updateSelectorFields(this.modelOptions)
-      }
-    },
-    async loadRouteView() {
-      this.loadData(this.$route.params.tab, this.$route.params.item)
+        this.keyUpdater = Date.now()
+      })
     },
     updateItems(updatedItems) {
       this.listItems = updatedItems;
     },
   },
   computed: {
-    showForm() {
-      return this.form
-    },
     listKey() {
-      // this.loadRouteView()
       return this.$route.path + `${this.keyUpdater}`
     },
-    formKey() {
-      // this.loadRouteView()
-      return this.$route.path + "aboba" + `${this.keyUpdater}`
-    }
   }
 };
 </script>

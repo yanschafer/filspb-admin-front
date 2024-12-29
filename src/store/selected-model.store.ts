@@ -118,15 +118,7 @@ export const selectedModelStore = defineStore("SelectedModel", {
                 return el
             })
         },
-        toggleCreation(creation: boolean) {
-            this.creation = creation
-        },
-        swapTo(modelName: string) {
-            console.log("SWAP TO", modelName)
-        },
-        swapToEdit(modelName: string, rowId: string) {
-            console.log("SWAP TO", modelName)
-        },
+        swap() {},
         toggleRowView(id: number) {
             this.model.toggleVisibility(id)
         },
@@ -159,7 +151,7 @@ export const selectedModelStore = defineStore("SelectedModel", {
             })
             
             buildObject.visible = true
-            buildObject.position = this.items.length
+            buildObject.position = this.items[this.items.length - 1].position + 1
 
             if (this.creation) return await this.model.create(buildObject)
             else return await this.model.patch(this.selectedItem.id, buildObject)

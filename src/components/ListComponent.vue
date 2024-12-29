@@ -125,10 +125,9 @@ export default {
   methods: {
     isImageField(fieldKey) {
       return fieldKey === "image" || fieldKey === "photo" || fieldKey.includes("image");
-      console.log(`isImageField(${fieldKey}) =`, result);
-      return result;
     },
     getImagePath(imagePath) {
+      if (!imagePath) return
       if (imagePath[0] == "/") {
         const baseUrl = "https://filspb.dudosyka.ru/files";
         return `${baseUrl}${imagePath}`;
@@ -169,18 +168,20 @@ export default {
       }
     },
     viewItem(item) {
-      this.selectedModel.toggleCreation(false);
-      item.visible = !item.visible;
-      this.$emit("update:items", this.items);
+      this.selectedModel.toggleRowView(item.id)
+      this.$emit("update:items", this.items.map(el => {
+        if (el.id == item.id) return {...el, visible: !el.visible}
+        else return el
+      }));
     },
     editItem(item) {
-      this.selectedModel.swapToEdit(this.$route.params.tab, item.id);
       this.$router.push({
-        path: `/dashboard/${this.$route.params.tab}/${item.id}`,
+        path: `/dashboard/${this.$route.params.tab}/edit/${item.id}`,
       });
     },
     deleteItem(item) {
-      if (confirm(`Удалить ${item.name}?`)) {
+      const name = item.name ? item.name : item.shortDescription
+      if (confirm(`Удалить ${name}?`)) {
         this.selectedModel.delete(item.id);
         this.$emit(
           "update:items",
