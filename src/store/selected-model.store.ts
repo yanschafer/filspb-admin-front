@@ -18,6 +18,7 @@ import EventModel from "@/api/modules/event/event.model";
 import ReviewModel from "@/api/modules/review/review.model";
 import EventSecondModel from "@/api/modules/event_second/event-second.model";
 import { AdminsModel } from "@/api/modules/auth/models/admins.model";
+import SliderModel from "@/api/modules/slider/slider.model";
 
 export const selectedModelStore = defineStore("SelectedModel", {
     state: () => ({
@@ -49,7 +50,8 @@ export const selectedModelStore = defineStore("SelectedModel", {
             'dep-contacts': () => new DepartmentContactsModel(),
             'news': () => new NewsModel(),
             'partners': () => new PartnersModel(),
-            'admins': () => new AdminsModel()
+            'admins': () => new AdminsModel(),
+            'slider': () => new SliderModel(),
         },
         modelName: "",
         creation: false,

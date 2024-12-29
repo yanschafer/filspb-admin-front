@@ -123,6 +123,11 @@ export default {
           click: "vacancy",
         },
         {
+          label: "Слайдер",
+          icon: "pi pi-briefcase",
+          click: "slider",
+        },
+        {
           label: "Детские программы",
           icon: "pi pi-face-smile",
           click: "children",

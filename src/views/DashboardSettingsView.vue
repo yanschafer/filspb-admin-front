@@ -4,12 +4,8 @@
         <SidebarComponent />
         <div class="content animate__animated animate__fadeIn">
             <h1>Добро пожаловать</h1>
-<<<<<<< HEAD
-            <FormComponent :fields="fields" />
-=======
             <p>Добро пожаловать в панель управления, выберите в левом меню раздел, который хотите редактировать.</p>
             <FormComponent :fields="fields" :no-redirect="true" />
->>>>>>> efc4af2fa75535233b332ad80db1c0f40aceeb45
             <!-- <ContentComponent /> -->
             <!-- <ListComponent :key="listKey" v-else @update:items="updateItems" :items="listItems" /> -->
         </div>

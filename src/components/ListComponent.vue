@@ -129,8 +129,10 @@ export default {
       return result;
     },
     getImagePath(imagePath) {
-      const baseUrl = "https://filspb.dudosyka.ru/files";
-      return `${baseUrl}${imagePath}`;
+      if (imagePath[0] == "/") {
+        const baseUrl = "https://filspb.dudosyka.ru/files";
+        return `${baseUrl}${imagePath}`;
+      } else return imagePath
     },
     isTimestamp(value) {
       return typeof value === "number" && value > 1000000000 && value < 9999999999999;
