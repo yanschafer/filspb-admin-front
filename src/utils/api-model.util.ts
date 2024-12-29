@@ -82,7 +82,7 @@ export default class ApiModelUtil {
       return afterRefresh as ApiResponseDto<T>;
     } else {
       TokenUtil.logout();
-      router.push({ name: 'auth' });
+      router.push({ path: '/login' });
       return new ApiResponseDto<T>(false, null, refreshResult.getError());
     }
   }

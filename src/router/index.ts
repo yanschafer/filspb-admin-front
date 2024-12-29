@@ -32,12 +32,12 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const dashboardRegex = /\/dashboard[\/a-zA-Z]+/
-  if (dashboardRegex.test(to.path) && !TokenUtil.isAuthorized()) {
+  if ((dashboardRegex.test(to.path) || to.path == '' || to.path == '/') && !TokenUtil.isAuthorized()) {
     next({path: '/login'})
     return
   }
 
-  if (to.path == '/login' && TokenUtil.isAuthorized()) {
+  if ((to.path == '/login' || to.path == '/' || to.path == '') && TokenUtil.isAuthorized()) {
       next({path: '/dashboard'})
       return
   }
