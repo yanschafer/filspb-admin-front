@@ -9,19 +9,9 @@
       />
     </div>
 
-    <DataTable
-      :value="filteredItems"
-      :paginator="true"
-      :rows="10"
-    >
-      <Column
-        field="id"
-        header="#"
-        sortable
-        filter
-        :style="{ width: '10%' }"
-      />
-      
+    <DataTable :value="filteredItems" :paginator="true" :rows="10">
+      <Column field="id" header="#" sortable filter :style="{ width: '10%' }" />
+
       <Column
         v-for="field in fields"
         :key="field.key"
@@ -30,7 +20,18 @@
         sortable
         filter
         :style="{ width: `${60 / fields.length}%` }"
-      />
+      >
+        <template #body="slotProps">
+          <img
+            v-if="isImageField(field.key)"
+            :src="getImagePath(slotProps.data[field.key])"
+            alt="Изображение"
+            style="max-width: 100px; max-height: 100px; object-fit: contain;"
+          />
+          <span v-else>{{ slotProps.data[field.key] }}</span>
+        </template>
+      </Column>
+
       <Column header="Управление" :style="{ width: '10%' }">
         <template #body="slotProps">
           <div class="action-buttons">
@@ -100,7 +101,6 @@ export default {
       });
     },
     filteredItems() {
-      console.log("Search Query:", this.searchQuery); 
       if (!this.searchQuery) return this.processedItems;
 
       const query = this.searchQuery.toLowerCase();
@@ -123,18 +123,27 @@ export default {
     },
   },
   methods: {
+    isImageField(fieldKey) {
+      return fieldKey === "image" || fieldKey === "photo" || fieldKey.includes("image");
+      console.log(`isImageField(${fieldKey}) =`, result);
+      return result;
+    },
+    getImagePath(imagePath) {
+      const baseUrl = "https://filspb.dudosyka.ru/files";
+      return `${baseUrl}${imagePath}`;
+    },
     isTimestamp(value) {
       return typeof value === "number" && value > 1000000000 && value < 9999999999999;
     },
     formatDate(timestamp) {
-  try {
-    const date = new Date(timestamp);
-    return format(date, "yyyy-MM-dd"); 
-  } catch (error) {
-    console.error("Ошибка форматирования даты:", error);
-    return timestamp;
-  }
-},
+      try {
+        const date = new Date(timestamp);
+        return format(date, "yyyy-MM-dd");
+      } catch (error) {
+        console.error("Ошибка форматирования даты:", error);
+        return timestamp;
+      }
+    },
     moveUp(item) {
       const index = this.items.findIndex((i) => i.id === item.id);
       if (index > 0) {
