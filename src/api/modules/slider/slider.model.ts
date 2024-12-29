@@ -6,8 +6,12 @@ import BaseModel from "../base.model";
 
 export default class SliderModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
-        super('slider', {"image": "Слайд"}, [
+        super('slider', {"shortDescription": "Заголовок", "image": "Слайд"}, [
             {item: "image", label: "Слайд", type: "image"},
+            {item: "link", label: "Ссылка", type: "text"},
+            {item: "buttonText", label: "Текст ссылки", type: "text"},
+            {item: "shortDescription", label: "Заголовок", type: "text"},
+            {item: "description", label: "Текст", type: "writer"},
         ])
     }
 }
