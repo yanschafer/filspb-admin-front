@@ -44,3 +44,15 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.checkbox-wrapper {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+.checkbox-single {
+    display: flex;
+    gap: 0.3rem;
+}
+</style>

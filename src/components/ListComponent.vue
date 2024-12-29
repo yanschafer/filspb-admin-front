@@ -1,7 +1,6 @@
 <template>
-  <div class="data-table-container">
+  <div class="data-table-container animate__animated animate__fadeIn">
     <h2>Список записей</h2>
-    <!-- Поле для поиска -->
     <div class="search-bar">
       <InputText
         v-model="searchQuery"
@@ -10,14 +9,11 @@
       />
     </div>
 
-    <!-- Таблица данных с фильтрацией и сортировкой -->
     <DataTable
       :value="filteredItems"
       :paginator="true"
       :rows="10"
-      :rowsPerPageOptions="[10, 20, 50]"
     >
-      <!-- Поле ID -->
       <Column
         field="id"
         header="#"
@@ -28,19 +24,19 @@
       
       <Column
         v-for="field in fields"
+        :key="field.key"
         :field="field.key"
         :header="field.header"
         sortable
         filter
         :style="{ width: `${60 / fields.length}%` }"
       />
-      <!-- Поле Управление -->
       <Column header="Управление" :style="{ width: '10%' }">
         <template #body="slotProps">
           <div class="action-buttons">
             <button v-if="showControls" @click="viewItem(slotProps.data)" class="action-btn">
               <i v-if="slotProps.data.visible" class="pi pi-eye" />
-              <i v-else class="pi pi-arrow-up" />
+              <i v-else class="pi pi-eye-slash" />
             </button>
             <button v-if="showControls" @click="moveUp(slotProps.data)" class="action-btn">
               <i class="pi pi-arrow-up" />
@@ -65,7 +61,8 @@
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import InputText from "primevue/inputtext";
-import { selectedModelStore } from '../store/selected-model.store';
+import { selectedModelStore } from "../store/selected-model.store";
+import { format } from "date-fns";
 
 export default {
   name: "ListComponent",
@@ -78,90 +75,112 @@ export default {
     items: {
       type: Array,
       required: true,
-    }
+    },
   },
   setup() {
     return {
       selectedModel: selectedModelStore(),
-    }
+    };
   },
   data() {
     return {
-      searchQuery: "", // Строка поиска
+      searchQuery: "",
     };
   },
   computed: {
-    // Фильтруемые данные
+    processedItems() {
+      return this.items.map((item) => {
+        const formattedItem = { ...item };
+        for (const key in formattedItem) {
+          if (this.isTimestamp(formattedItem[key])) {
+            formattedItem[key] = this.formatDate(formattedItem[key]);
+          }
+        }
+        return formattedItem;
+      });
+    },
     filteredItems() {
-      if (!this.searchQuery) return this.items;
+      console.log("Search Query:", this.searchQuery); 
+      if (!this.searchQuery) return this.processedItems;
+
       const query = this.searchQuery.toLowerCase();
-      return this.items.filter(
-        (item) =>
-          item.name.toLowerCase().includes(query) ||
-          String(item.id).includes(query)
-      );
+
+      return this.processedItems.filter((item) => {
+        const nameMatch = item.name && item.name.toLowerCase().includes(query);
+        const idMatch = item.id && String(item.id).includes(query);
+
+        return nameMatch || idMatch;
+      });
     },
     fields() {
-      return this.selectedModel.cols
+      return this.selectedModel.cols;
     },
     showControls() {
-      return this.selectedModel.showPositionAndVisibilityControls
+      return this.selectedModel.showPositionAndVisibilityControls;
     },
     showDelete() {
-      return this.selectedModel.modelName != "admins" || this.items.length > 1
-    }
+      return this.selectedModel.modelName != "admins" || this.items.length > 1;
+    },
   },
   methods: {
-  moveUp(item) {
-    const index = this.items.findIndex((i) => i.id === item.id);
-    if (index > 0) {
-      // Меняем местами текущий элемент и предыдущий
-      [this.items[index - 1], this.items[index]] = [
-        this.items[index],
-        this.items[index - 1],
-      ];
-      this.selectedModel.moveRowUp(item.id)
-      // Оповещаем родительский компонент об изменении
-      this.$emit("update:items", [...this.items]);
-    }
-  },
-  moveDown(item) {
-    const index = this.items.findIndex((i) => i.id === item.id);
-    if (index < this.items.length - 1) {
-      // Меняем местами текущий элемент и следующий
-      [this.items[index], this.items[index + 1]] = [
-        this.items[index + 1],
-        this.items[index],
-      ];
-      this.selectedModel.moveRowDown(item.id)
-      // Оповещаем родительский компонент об изменении
-      this.$emit("update:items", [...this.items]);
-    }
-  },
-  viewItem(item) {
-    this.selectedModel.toggleCreation(false)
-    item.visible = !item.visible
-    this.$emit(
-      "update:items",
-      this.items
-    );
-  },
-  editItem(item) {
-    this.selectedModel.swapToEdit(this.$route.params.tab, item.id)
-    this.$router.push({path: `/dashboard/${this.$route.params.tab}/${item.id}`})
-  },
-  deleteItem(item) {
-    if (confirm(`Удалить ${item.name}?`)) {
-      this.selectedModel.delete(item.id)
-      this.$emit(
-        "update:items",
-        this.items.filter((i) => i.id !== item.id)
-      );
-    }
-  },
+    isTimestamp(value) {
+      return typeof value === "number" && value > 1000000000 && value < 9999999999999;
+    },
+    formatDate(timestamp) {
+  try {
+    const date = new Date(timestamp);
+    return format(date, "yyyy-MM-dd"); 
+  } catch (error) {
+    console.error("Ошибка форматирования даты:", error);
+    return timestamp;
+  }
 },
+    moveUp(item) {
+      const index = this.items.findIndex((i) => i.id === item.id);
+      if (index > 0) {
+        [this.items[index - 1], this.items[index]] = [
+          this.items[index],
+          this.items[index - 1],
+        ];
+        this.selectedModel.moveRowUp(item.id);
+        this.$emit("update:items", [...this.items]);
+      }
+    },
+    moveDown(item) {
+      const index = this.items.findIndex((i) => i.id === item.id);
+      if (index < this.items.length - 1) {
+        [this.items[index], this.items[index + 1]] = [
+          this.items[index + 1],
+          this.items[index],
+        ];
+        this.selectedModel.moveRowDown(item.id);
+        this.$emit("update:items", [...this.items]);
+      }
+    },
+    viewItem(item) {
+      this.selectedModel.toggleCreation(false);
+      item.visible = !item.visible;
+      this.$emit("update:items", this.items);
+    },
+    editItem(item) {
+      this.selectedModel.swapToEdit(this.$route.params.tab, item.id);
+      this.$router.push({
+        path: `/dashboard/${this.$route.params.tab}/${item.id}`,
+      });
+    },
+    deleteItem(item) {
+      if (confirm(`Удалить ${item.name}?`)) {
+        this.selectedModel.delete(item.id);
+        this.$emit(
+          "update:items",
+          this.items.filter((i) => i.id !== item.id)
+        );
+      }
+    },
+  },
 };
 </script>
+
 
 <style scoped>
 .data-table-container {
@@ -185,7 +204,7 @@ export default {
 
 .action-buttons {
   display: flex;
-  justify-content: space-between; /* Разделяет кнопки */
+  justify-content: space-between; 
   gap: 0.5rem;
 }
 

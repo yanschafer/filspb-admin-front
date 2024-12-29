@@ -9,6 +9,7 @@ import { definePreset } from '@primevue/themes';
 import ToastService from 'primevue/toastservice';
 import 'primeicons/primeicons.css';
 import { createPinia } from 'pinia';
+import 'animate.css';
 
 
 

@@ -2,9 +2,8 @@
     <HeaderComponent />
     <section class="section">
         <SidebarComponent />
-        <div class="content">
+        <div class="content animate__animated animate__fadeIn">
             <h1>Добро пожаловать</h1>
-            <p>Добро пожаловать в панель управления, выберите в левом меню раздел, который хотите редактировать.</p>
             <FormComponent :fields="fields" />
             <!-- <ContentComponent /> -->
             <!-- <ListComponent :key="listKey" v-else @update:items="updateItems" :items="listItems" /> -->

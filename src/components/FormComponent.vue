@@ -1,6 +1,7 @@
 <template>
-  <div class="form-wrapper">
-    <template v-for="field in fields">
+  <div class="form-wrapper animate__animated animate__fadeIn">
+    <h2>Создание элемента</h2>
+    <template v-for="(field, index) in fields">
       <!-- Текст с ошибкой -->
       <div v-if="field.type == 'text'" class="input-group">
         <label :for="field.item">{{ field.label }}</label>
@@ -113,9 +114,10 @@
           @updated="checkboxUpdated($event, field)"
         />
       </div>
+      <Divider v-if="index < fields.length - 1" />
     </template>
 
-    <button @click="save">Save</button>
+    <Button class="save-btn" severity="success" @click="save">Сохранить</Button>
 
     <!-- <div class="input-group">
       <label for="img-select">Файл аплоуд для доков</label>
@@ -142,6 +144,8 @@ import {
   FileUpload,
   Textarea,
   Checkbox,
+  Button,
+  Divider
 } from "primevue";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
@@ -174,7 +178,9 @@ export default {
     Checkbox,
     BlockCreateComponent, 
     CheckboxMulti,
-    Toast
+    Toast,
+    Button,
+    Divider
   },
   props: ["fields", "modelOptions"],
   data() {
@@ -285,12 +291,18 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    width: 100%;
+    padding: 1rem;
+  background-color: #fff;
+  border-radius: 8px;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 .input-group {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  max-width: 40rem;
+  width: 100%;
   align-items: start;
 }
 .img-preview {
@@ -300,5 +312,8 @@ export default {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+}
+.save-btn {
+  margin-top: 1rem;
 }
 </style>
