@@ -211,7 +211,7 @@ export default {
       field.value = field.dateValue.getTime()
     },
     async save() {
-      const res = await this.selectedModel.save()
+      const res = await this.selectedModel.save(!this.noRedirect)
 
       if (res.success) {
           this.toast.add({

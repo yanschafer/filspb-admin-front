@@ -75,6 +75,9 @@ export const selectedModelStore = defineStore("SelectedModel", {
             }))
             this.model = model
             this.fields = model.fields
+            this.fields.push({item: 'position'})
+            this.fields.push({item: 'visible'})
+
             this.showPositionAndVisibilityControls = model.showControls
 
             const getAllRes = await model.getAll()
@@ -98,7 +101,7 @@ export const selectedModelStore = defineStore("SelectedModel", {
             
             this.selectedItem = getOneRes.getData()
             this.fields = this.fields.map(el => {
-                el.value = this.selectedItem[el.item]
+                el.value = this.selectedItem[el.item] ? this.selectedItem[el.item] : ""
                 if (el.type == 'timestamp') {
                     el.dateValue = new Date(this.selectedItem[el.item])
                 }
@@ -131,10 +134,11 @@ export const selectedModelStore = defineStore("SelectedModel", {
         delete(id: number) {
             this.model.delete(id)
         },
-        async save() {
+        async save(settings = false) {
             const buildObject = {}
             
             this.fields.forEach(el => {
+                buildObject[el.item] = el.value
                 if (el.value) {
                     if (el.type == 'sequential') {
                         buildObject[el.item] = JSON.stringify(el.value)
@@ -149,10 +153,15 @@ export const selectedModelStore = defineStore("SelectedModel", {
                     }
                 }
             })
-            
-            buildObject.visible = true
-            buildObject.position = this.items[this.items.length - 1].position + 1
 
+            if (this.creation) {
+                buildObject.visible = true
+                if (this.items.length > 0)
+                    buildObject.position = this.items[this.items.length - 1].position + 1
+                else
+                    buildObject.position = 1
+            }
+            
             if (this.creation) return await this.model.create(buildObject)
             else return await this.model.patch(this.selectedItem.id, buildObject)
         }
