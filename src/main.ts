@@ -35,7 +35,10 @@ const FilSpb = definePreset(Aura, {
 
 app.use(PrimeVue, {
     theme: {
-        preset: FilSpb
+        preset: FilSpb,
+        options: {
+            darkModeSelector: 'light'
+        }
     }
 });
 app.use(router)

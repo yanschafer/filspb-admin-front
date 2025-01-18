@@ -181,19 +181,22 @@ export default {
 </script>
 
 <style scoped>
-.active {
-  background-color: #f9f3e6;
-  font-weight: bold;
-  color: #b06700;
-}
 .sidebar-wrapper {
-  width: 20rem;
+  width: 280px;
+  height: calc(100vh - 60px);
+  background: white;
+  border-right: 1px solid #e5e7eb;
   padding: 1rem;
-  height: 100%;
   font-family: "Open Sans", serif;
   font-optical-sizing: auto;
   font-style: normal;
   font-variation-settings: "wdth" 100;
+}
+
+.active {
+  background-color: #f9f3e6;
+  font-weight: bold;
+  color: #b06700;
 }
 
 .sidebar-icon {
@@ -206,11 +209,6 @@ export default {
   margin-right: 0.3rem;
 }
 
-.active {
-  background-color: #f9f3e6;
-  font-weight: bold;
-  color: #b06700;
-}
 a {
   display: flex;
   align-items: center;
@@ -295,6 +293,8 @@ a .font-semibold {
 @media (max-width: 768px) {
   .sidebar-wrapper {
     width: 100%;
+    height: 100%;
+    border: none;
   }
 }
 </style>

@@ -1,7 +1,9 @@
 <template>
-    <HeaderComponent />
+    <HeaderComponent @toggle-sidebar="toggleSidebar" />
     <section class="section">
-        <SidebarComponent />
+        <div class="sidebar-container" :class="{ 'sidebar-active': showSidebar }">
+            <SidebarComponent />
+        </div>
         <div class="content animate__animated animate__fadeIn">
             <h1>Добро пожаловать</h1>
             <p>Добро пожаловать в панель управления, выберите в левом меню раздел, который хотите редактировать.</p>
@@ -18,7 +20,6 @@ import FormComponent from '@/components/FormComponent.vue'
 import SystemConfigurationModel from '@/api/modules/system_configuration/system-configuration.model';
 import { selectedModelStore } from '@/store/selected-model.store'
 
-
 export default {
   components: {
     HeaderComponent,
@@ -33,6 +34,7 @@ export default {
       form: false,
       selectedModelStore: selectedModelStore(),
       model: new SystemConfigurationModel(),
+      showSidebar: false
     };
   },
   async mounted() {
@@ -48,6 +50,9 @@ export default {
     this.selectedModelStore.selectedItem = {id: 1}
   },
   methods: {
+    toggleSidebar() {
+      this.showSidebar = !this.showSidebar;
+    }
   },
   computed: {
   }
@@ -57,9 +62,47 @@ export default {
 <style scoped>
 .section {
     display: flex;
+    position: relative;
+    min-height: calc(100vh - 4rem);
 }
+
+.sidebar-container {
+    width: 280px;
+    background: white;
+    transition: transform 0.3s ease;
+    height: calc(100vh - 4rem);
+    position: fixed;
+}
+
 .content {
+    flex: 1;
     padding: 2rem;
-    width: 100%;
+    transition: margin-left 0.3s ease;
+    margin-left: 280px;
+}
+
+@media (max-width: 768px) {
+    .section {
+        margin-top: 4rem;
+    }
+
+    .sidebar-container {
+        position: fixed;
+        left: 0;
+        top: 4rem;
+        height: calc(100vh - 4rem);
+        transform: translateX(-100%);
+        z-index: 999;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-active {
+        transform: translateX(0);
+    }
+
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
 }
 </style>
