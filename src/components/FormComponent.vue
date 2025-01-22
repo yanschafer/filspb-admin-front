@@ -236,15 +236,51 @@ export default {
       selectedModel: selectedModelStore()
     }
   },
+  watch: {
+    modelOptions: {
+      handler(newOptions) {
+        console.log('Model options updated:', newOptions);
+        // При изменении опций переинициализируем значения мультиселектов
+        this.initializeMultiSelectValues();
+      },
+      deep: true
+    }
+  },
   created() {
-    // Инициализируем значения для мультиселектов
-    this.fields.forEach(field => {
-      if (field.type === 'model-multi-selector') {
-        this.selectedValues[field.item] = field.value || [];
-      }
-    });
+    this.initializeMultiSelectValues();
   },
   methods: {
+    initializeMultiSelectValues() {
+      this.fields.forEach(field => {
+        if (field.type === 'model-multi-selector') {
+          // Преобразуем значения в правильный формат
+          const values = Array.isArray(field.value) ? field.value : 
+                        field.value ? [field.value] : [];
+          
+          console.log('Initializing multiselect field:', field.item);
+          console.log('Initial values:', values);
+          
+          // Получаем опции для этого поля
+          const options = this.getSelectorOptions(field);
+          console.log('Available options:', options);
+          
+          if (options && options.length > 0) {
+            // Находим соответствующие опции для значений
+            const selectedOptions = options.filter(opt => 
+              values.includes(opt.value)
+            );
+            
+            console.log('Selected options:', selectedOptions);
+            
+            // Сохраняем значения
+            this.selectedValues[field.item] = selectedOptions.map(opt => opt.value);
+            field.value = this.selectedValues[field.item];
+            
+            console.log('Initialized values:', this.selectedValues[field.item]);
+          }
+        }
+      });
+    },
     change(field) {
       field.value = field.dateValue.getTime()
     },
