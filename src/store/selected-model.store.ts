@@ -111,6 +111,18 @@ export const selectedModelStore = defineStore("SelectedModel", {
                 else if (el.type == 'sequential') {
                     el.value = JSON.parse(this.selectedItem[el.item])
                 }
+                else if (el.type == 'model-multi-selector' && el.selectorModel) {
+                    // Получаем все опции для мульти-селектора
+                    const options = await el.selectorModel.getAll()
+                    if (options.success) {
+                        // Убеждаемся, что el.value это массив
+                        const currentValue = Array.isArray(el.value) ? el.value : 
+                                          el.value ? [el.value] : [];
+                        
+                        // Сохраняем только ID выбранных опций
+                        el.value = currentValue;
+                    }
+                }
                 else if (el.type == 'model-selector' && el.selectorModel) {
                     // Получаем все опции для селектора
                     const options = await el.selectorModel.getAll()

@@ -77,16 +77,28 @@
         <label :for="field.item">{{field.label}}</label>
         <MultiSelect
           :id="field.item"
-          v-model="field.value"
+          :modelValue="selectedValues[field.item]"
           :options="getSelectorOptions(field)"
+          @update:modelValue="(val) => handleMultiSelectorChange(val, field)"
           filter
           optionLabel="name"
-          optionValue="name"
+          optionValue="value"
           :placeholder="field.label"
+          display="chip"
+          class="w-full"
+          :showToggleAll="false"
+          :selectAll="false"
+          dataKey="value"
         >
           <template #value="slotProps">
-            <div v-if="slotProps.value" class="flex items-center">
-              <div>{{ slotProps.value.name }}</div>
+            <div v-if="slotProps.value && slotProps.value.length > 0" class="multiselect-chips-container">
+              <Chip 
+                v-for="option in getSelectedOptions(field, slotProps.value)" 
+                :key="option.value"
+                class="multiselect-chip"
+              >
+                {{ option.name }}
+              </Chip>
             </div>
             <span v-else>
               {{ slotProps.placeholder }}
@@ -175,7 +187,8 @@ import {
   Textarea,
   Checkbox,
   Button,
-  Divider
+  Divider,
+  Chip
 } from "primevue";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
@@ -212,70 +225,91 @@ export default {
     CheckboxMulti,
     Toast,
     Button,
-    Divider
+    Divider,
+    Chip
   },
   props: ["fields", "modelOptions", "noRedirect"],
   data() {
     return {
-      test: null,
-      selectedModel: selectedModelStore(),
-      selectedItems: null,
-      value: "",
-      pizza: null,
-      items: [
-        { name: "Australia", code: "AU" },
-        { name: "Brazil", code: "BR" },
-        { name: "China", code: "CN" },
-        { name: "Egypt", code: "EG" },
-        { name: "France", code: "FR" },
-        { name: "Germany", code: "DE" },
-        { name: "India", code: "IN" },
-        { name: "Japan", code: "JP" },
-        { name: "Spain", code: "ES" },
-        { name: "United States", code: "US" },
-      ]
-    };
+      selectedValues: {},
+      toast: useToast(),
+      selectedModel: selectedModelStore()
+    }
   },
-  async created() {
-    this.toast = useToast();
+  created() {
+    // Инициализируем значения для мультиселектов
+    this.fields.forEach(field => {
+      if (field.type === 'model-multi-selector') {
+        this.selectedValues[field.item] = field.value || [];
+      }
+    });
   },
   methods: {
     change(field) {
       field.value = field.dateValue.getTime()
     },
     async save() {
-      console.log(this.value)
-      const res = await this.selectedModel.save(!this.noRedirect)
-
-      if (res.success) {
+      try {
+        const saveRes = await this.selectedModel.save();
+        if (saveRes.success) {
           this.toast.add({
             severity: "success",
-            summary: "Форма отправлена",
-            detail: "Данные сохранены!",
+            summary: "Успех",
+            detail: "Успешно сохранено",
             life: 3000,
           });
+
           if (!this.noRedirect) {
-            await this.selectedModel.refreshModel()
-            this.$router.push({path: `/dashboard/${this.$route.params.tab}`})
+            window.location.href = "/dashboard/" + this.selectedModel.modelName;
           }
-      } else {
+        } else {
           this.toast.add({
             severity: "error",
-            summary: "Ошибка валидации",
+            summary: "Ошибка",
             detail: "Пожалуйста, проверьте поля формы.",
             life: 3000,
           });
+        }
+      } catch (error) {
+        console.error('Error saving:', error);
+        this.toast.add({
+          severity: "error",
+          summary: "Ошибка",
+          detail: "Произошла ошибка при сохранении.",
+          life: 3000,
+        });
       }
     },
     getSelectorOptions(field: FieldDto) {
-      const res = this.modelOptions[field.item]
-      console.log("SELECTOR DATA")
-      console.log(field.value)
-      console.log(this.modelOptions)
-      console.log(res == null)
-      console.log("----------------------------------")
-      if (res) return res
-      else return []
+      const options = this.modelOptions[field.item];
+      console.log('Model options for', field.item, ':', options);
+      if (!options) return [];
+      
+      // Убедимся, что используем правильные поля для опций
+      return options.map(opt => ({
+        value: opt.value,
+        name: opt.name
+      }));
+    },
+    
+    getSelectedOptions(field, selectedValues) {
+      const options = this.getSelectorOptions(field);
+      if (!selectedValues || !Array.isArray(selectedValues)) return [];
+      
+      return options.filter(opt => selectedValues.includes(opt.value));
+    },
+    
+    handleMultiSelectorChange(value, field) {
+      console.log('MultiSelect change for', field.item, ':', value);
+      
+      // Обновляем локальное состояние
+      this.selectedValues[field.item] = value;
+      
+      // Обновляем значение поля
+      field.value = value;
+      
+      console.log('Updated field value:', field.value);
+      console.log('Selected values state:', this.selectedValues);
     },
     getImageSource(value: string) {
       if (value[0] != "/")
@@ -362,5 +396,34 @@ export default {
 }
 .save-btn {
     margin-top: 1rem;
+}
+.multiselect-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-width: 100%;
+  padding: 0.25rem;
+}
+
+.multiselect-chip {
+  margin: 0.125rem;
+  max-width: calc(100% - 1rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:deep(.p-multiselect) {
+  width: 100%;
+}
+
+:deep(.p-multiselect-label) {
+  white-space: normal !important;
+  overflow: visible !important;
+  min-height: 2.5rem;
+}
+
+:deep(.p-multiselect-token) {
+  margin: 0.25rem !important;
 }
 </style>
