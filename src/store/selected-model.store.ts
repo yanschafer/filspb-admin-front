@@ -194,7 +194,7 @@ export const selectedModelStore = defineStore("SelectedModel", {
                     //     buildObject[el.item] = el.value.value
                     // }
                     if (el.type == 'model-multi-selector') {
-                        buildObject[el.item] = el.value.map(el => el.value)
+                        buildObject[el.item] = el.value
                     }
                 }
             })

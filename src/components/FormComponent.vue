@@ -260,7 +260,7 @@ export default {
           });
 
           if (!this.noRedirect) {
-            window.location.href = "/dashboard/" + this.selectedModel.modelName;
+            // window.location.href = "/filspb-admin/dashboard/" + this.selectedModel.modelName;
           }
         } else {
           this.toast.add({
@@ -336,7 +336,10 @@ export default {
       URL.revokeObjectURL(link.href);
     },
     checkboxUpdated(e, field) {
-      field.value = e.map(parseInt)
+
+      field.value = e.map(el => {
+        return typeof el == 'string' ? parseInt(el) : el
+      })
     },
     imageSrc(field) {
       if (!field.value) return null
