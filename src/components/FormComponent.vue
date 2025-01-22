@@ -53,6 +53,7 @@
           :options="getSelectorOptions(field)"
           filter
           optionLabel="name"
+          
           :placeholder="field.label"
         >
           <template #value="slotProps">
@@ -70,6 +71,35 @@
           </template>
         </Select>
       </div>
+
+      <!-- Мульти Селект -->
+      <div v-if="field.type == 'model-multi-selector'" class="input-group">
+        <label :for="field.item">{{field.label}}</label>
+        <MultiSelect
+          :id="field.item"
+          v-model="field.value"
+          :options="getSelectorOptions(field)"
+          filter
+          optionLabel="name"
+          optionValue="name"
+          :placeholder="field.label"
+        >
+          <template #value="slotProps">
+            <div v-if="slotProps.value" class="flex items-center">
+              <div>{{ slotProps.value.name }}</div>
+            </div>
+            <span v-else>
+              {{ slotProps.placeholder }}
+            </span>
+          </template>
+          <template #option="slotProps">
+            <div class="flex items-center">
+              <div>{{ slotProps.option.name }}</div>
+            </div>
+          </template>
+        </MultiSelect>
+      </div>
+      
 
       <!-- File -->
       <div v-if="field.type == 'file' || field.type == 'image'" class="input-group">
@@ -149,6 +179,7 @@ import {
 } from "primevue";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
+import MultiSelect from 'primevue/multiselect';
 import Editor from "primevue/editor";
 import BlockCreateComponent from "./BlockCreateComponent.vue";
 import type { FieldDto } from "@/api/modules/base.model";
@@ -172,6 +203,7 @@ export default {
     InputText,
     DatePicker,
     Select,
+    MultiSelect,
     FileUpload,
     Editor,
     Textarea,
@@ -185,6 +217,7 @@ export default {
   props: ["fields", "modelOptions", "noRedirect"],
   data() {
     return {
+      test: null,
       selectedModel: selectedModelStore(),
       selectedItems: null,
       value: "",
@@ -211,6 +244,7 @@ export default {
       field.value = field.dateValue.getTime()
     },
     async save() {
+      console.log(this.value)
       const res = await this.selectedModel.save(!this.noRedirect)
 
       if (res.success) {
@@ -238,7 +272,8 @@ export default {
       console.log("SELECTOR DATA")
       console.log(field.value)
       console.log(this.modelOptions)
-      console.log(res)
+      console.log(res == null)
+      console.log("----------------------------------")
       if (res) return res
       else return []
     },

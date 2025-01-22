@@ -19,6 +19,7 @@ import ReviewModel from "@/api/modules/review/review.model";
 import EventSecondModel from "@/api/modules/event_second/event-second.model";
 import { AdminsModel } from "@/api/modules/auth/models/admins.model";
 import SliderModel from "@/api/modules/slider/slider.model";
+import SeasonEventModel from "@/api/modules/season_event/season-event.model";
 
 export const selectedModelStore = defineStore("SelectedModel", {
     state: () => ({
@@ -36,6 +37,7 @@ export const selectedModelStore = defineStore("SelectedModel", {
         selectedItem: {},
         tabToModel: {
             'affiche': () => new EventModel(),
+            'season': () => new SeasonEventModel(),
             'halls': () => new HallModel(),
             'review': () => new ReviewModel(),
             'platform': () => new PlatfromModel(),
@@ -175,6 +177,12 @@ export const selectedModelStore = defineStore("SelectedModel", {
                     }
                     if (el.type == 'file') {
                         buildObject["docName"] = el.docName
+                    }
+                    // if (el.type == 'selector' || el.type == 'model-selector') {
+                    //     buildObject[el.item] = el.value.value
+                    // }
+                    if (el.type == 'model-multi-selector') {
+                        buildObject[el.item] = el.value.map(el => el.value)
                     }
                 }
             })

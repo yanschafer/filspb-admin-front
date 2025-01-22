@@ -45,7 +45,7 @@ export default {
   methods: {
     async loadSelectors() {
       await Promise.all(this.fields.map(async f => {
-          if (f.type == 'model-selector' || (f.type == 'checkbox-multi' && f.selectorModel)) {
+          if (f.type == 'model-selector' || f.type == 'model-multi-selector' || (f.type == 'checkbox-multi' && f.selectorModel)) {
             const data = await f.selectorModel.getAll()
             const opts = data.getData().map((el) => ({
               name: el.name,
