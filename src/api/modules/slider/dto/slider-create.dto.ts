@@ -1,8 +1,7 @@
 export default class DocumentsCreateDto {
     constructor(
-        public image: string,
-        public shortDescription: string,
-        public description: string,
+        public desktopImage: string,
+        public mobileImage: string,
         public link: string,
         public buttonText: string,
         public visible: boolean,

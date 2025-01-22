@@ -124,7 +124,7 @@ export default {
   },
   methods: {
     isImageField(fieldKey) {
-      return fieldKey === "image" || fieldKey === "photo" || fieldKey.includes("image");
+      return fieldKey === "image" || fieldKey === "photo" || fieldKey.toLowerCase().includes("image");
     },
     getImagePath(imagePath) {
       if (!imagePath) return
