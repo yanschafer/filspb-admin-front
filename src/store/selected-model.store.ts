@@ -138,18 +138,23 @@ export const selectedModelStore = defineStore("SelectedModel", {
             const buildObject = {}
             
             this.fields.forEach(el => {
-                buildObject[el.item] = el.value
+                if (el.type == 'selector' || el.type == 'model-selector') {
+                    if (typeof el.selectorOptions === 'object' && 
+                        Object.values(el.selectorOptions).every(v => typeof v === 'boolean')) {
+                        buildObject[el.item] = el.value?.value ?? false
+                    } else {
+                        buildObject[el.item] = el.value?.value || null
+                    }
+                } else {
+                    buildObject[el.item] = el.value
+                }
+
                 if (el.value) {
                     if (el.type == 'sequential') {
                         buildObject[el.item] = JSON.stringify(el.value)
-                    } else {
-                        buildObject[el.item] = el.value
                     }
                     if (el.type == 'file') {
                         buildObject["docName"] = el.docName
-                    }
-                    if (el.type == 'selector' || el.type == 'model-selector') {
-                        buildObject[el.item] = el.value.value
                     }
                 }
             })

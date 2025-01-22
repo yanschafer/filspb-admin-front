@@ -39,8 +39,8 @@ export default {
     this.selectedModel.creation = true;
     const model = this.$route.params.tab
     this.selectedModel.loadModelByName(model).finally(() => {
-      this.loadSelectors()
       this.fields = this.selectedModel.fields
+      this.loadSelectors()
     })
   },
   methods: {

@@ -38,8 +38,8 @@ export default {
   created() {
     this.selectedModel.creation = false;
     this.selectedModel.selectRow(this.$route.params.tab, parseInt(this.$route.params.item)).finally(() => {
-      this.loadSelectors()
       this.fields = this.selectedModel.fields
+      this.loadSelectors()
     })
   },
   methods: {

@@ -282,6 +282,9 @@ export default {
         field.value = field.value.split("base64,")[1] 
       }
     },
+    handleSelectorChange(event, field) {
+      field.value = event.value;
+    },
   },
 };
 </script>
@@ -293,27 +296,36 @@ export default {
     gap: 1rem;
     width: 100%;
     padding: 1rem;
-  background-color: #fff;
-  border-radius: 8px;
-  width: 100%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    border-radius: 8px;
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 .input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  width: 100%;
-  align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 100%;
+    align-items: start;
+}
+.input-group :deep(.p-dropdown),
+.input-group :deep(.p-select),
+.input-group :deep(.p-multiselect) {
+    width: 100%;
+    min-height: 40px;
+}
+.input-group :deep(.p-inputtext) {
+    min-height: 40px;
 }
 .img-preview {
-  max-width: 300px;
+    max-width: 300px;
 }
 .checkbox-wrapper {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 .save-btn {
-  margin-top: 1rem;
+    margin-top: 1rem;
 }
 </style>
