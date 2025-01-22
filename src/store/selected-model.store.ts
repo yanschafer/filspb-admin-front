@@ -100,16 +100,36 @@ export const selectedModelStore = defineStore("SelectedModel", {
                 return getOneRes
             
             this.selectedItem = getOneRes.getData()
-            this.fields = this.fields.map(el => {
+            this.fields = await Promise.all(this.fields.map(async el => {
                 el.value = this.selectedItem[el.item] ? this.selectedItem[el.item] : ""
+                
                 if (el.type == 'timestamp') {
                     el.dateValue = new Date(this.selectedItem[el.item])
                 }
-                if (el.type == 'sequential') {
+                else if (el.type == 'sequential') {
                     el.value = JSON.parse(this.selectedItem[el.item])
                 }
+                else if (el.type == 'model-selector' && el.selectorModel) {
+                    // Получаем все опции для селектора
+                    const options = await el.selectorModel.getAll()
+                    if (options.success) {
+                        const selectedOption = options.getData().find(opt => opt.id === el.value)
+                        if (selectedOption) {
+                            el.value = { value: selectedOption.id, name: selectedOption.name }
+                        }
+                    }
+                }
+                else if (el.type == 'selector' && el.selectorOptions) {
+                    // Для обычных селекторов (например, да/нет)
+                    const entries = Object.entries(el.selectorOptions)
+                    const selectedEntry = entries.find(([_, value]) => value === el.value)
+                    if (selectedEntry) {
+                        el.value = { value: el.value, name: selectedEntry[0] }
+                    }
+                }
+                
                 return el
-            })
+            }))
 
             return getOneRes
         },
