@@ -111,7 +111,7 @@ export default {
             { label: "Отзывы", icon: "pi pi-comments", click: "review" },
             { label: "Площадки", icon: "pi pi-map-marker", click: "platform" },
             { label: "События", icon: "pi pi-clock", click: "events" },
-            { label: "Абонементы", icon: "pi pi-clock", click: "season" },
+            { label: "Абонементы", icon: "pi pi-ticket", click: "season" },
             { label: "Теги", icon: "pi pi-tag", click: "tags" },
           ],
         },
@@ -122,7 +122,7 @@ export default {
         },
         {
           label: "Слайдер",
-          icon: "pi pi-briefcase",
+          icon: "pi pi-images",
           click: "slider",
         },
         {
