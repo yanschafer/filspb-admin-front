@@ -15,7 +15,7 @@ export default class EventModel extends BaseModel<Dto, ListDto, CreateDto, Updat
                 {item: "date", label: "Дата", type: "timestamp"},
                 {item: "time", label: "Время", type: "text"},
                 {item: "eventId", label: "Событие", type: "model-selector", selectorModel: new EventSecondModel()},
-                {item: "hallId", label: "Зал", type: "model-selector", selectorModel: new HallModel()},
+                {item: "hallId", label: "Зал", type: "model-selector", selectorProcessor: (row) => {return `${row.platformName}, ${row.name}`}, selectorModel: new HallModel()},
                 {item: "price", label: "Цена от", type: "text"},
                 {item: "soldOut", label: "Билеты распроданы", type: "selector", selectorOptions: {"Да": true, "Нет": false}},
                 {item: "purchaseLink", label: "Ссылка", type: "text"},

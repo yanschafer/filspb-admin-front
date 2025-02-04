@@ -347,18 +347,21 @@ export default {
       console.log('Updated field value:', field.value);
       console.log('Selected values state:', this.selectedValues);
     },
+
     getImageSource(value: string) {
       if (value[0] != "/")
         return value
       else
         return `${appConf.proto}://${appConf.endpoint}/files${value}`
     },
+
     getLoadedFilePreview(field: FieldDto) {
       if (!field.value) return null
       if (field.value[0] == "/") return field.value
       if (field.docName) return field.docName
       else field.value
     },
+    
     async downloadFile(fileName: string) {
       const response = await fetch(`${appConf.proto}://${appConf.endpoint}/files${fileName}`);
       if (!response.ok) throw new Error('Network response was not ok');

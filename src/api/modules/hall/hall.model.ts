@@ -7,7 +7,7 @@ import PlatfromModel from "../platform/platform.model";
 
 export default class HallModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
-        super('hall',  {"name": "Название"}, [
+        super('hall',  { "platformName": "Площадка", "name": "Название"}, [
             {item: "platform", label: "Площадка", type: "model-selector", selectorModel: new PlatfromModel()},
             {item: "name", label: "Название", type: "text"},
         ])
