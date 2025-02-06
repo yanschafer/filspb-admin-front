@@ -296,7 +296,7 @@ export default {
           });
 
           if (!this.noRedirect) {
-            // window.location.href = "/filspb-admin/dashboard/" + this.selectedModel.modelName;
+            window.location.href = "/filspb-admin/dashboard/" + this.selectedModel.modelName;
           }
         } else {
           this.toast.add({
