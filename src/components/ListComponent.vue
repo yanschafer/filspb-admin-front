@@ -28,6 +28,9 @@
             alt="Изображение"
             style="max-width: 100px; max-height: 100px; object-fit: contain;"
           />
+          <span v-else-if="field.key == 'isActive'">
+            {{ slotProps.data[field.key] ? "Да" : "Нет" }}
+          </span>
           <span v-else>{{ slotProps.data[field.key] }}</span>
         </template>
       </Column>

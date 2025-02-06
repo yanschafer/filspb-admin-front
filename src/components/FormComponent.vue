@@ -113,8 +113,8 @@
       </div>
       
 
-      <!-- File -->
-      <div v-if="field.type == 'file' || field.type == 'image'" class="input-group">
+      <!-- Image -->
+      <div v-if="field.type == 'image'" class="input-group">
         <label :for="field.item">{{field.label}}</label>
         <FileUpload
           :id="field.item"
@@ -127,7 +127,23 @@
           :chooseLabel="field.type == 'image' ? 'Выбрать изображение' : 'Выбрать файл'"
         />
         <img v-if="field.value && field.type == 'image'" :src="getImageSource(field.value)" alt="Image" class="img-preview" />
-        <a v-else @click="downloadFile(field.value)" href="#">{{ getLoadedFilePreview(field) }}</a>
+      </div>
+
+
+      <!-- File -->
+      <div v-if="field.type == 'file'" class="input-group">
+        <label :for="field.item">{{field.label}}</label>
+        <FileUpload
+          :id="field.item"
+          mode="basic"
+          @select="onFileSelect($event, field)"
+          customUpload
+          auto
+          severity="secondary"
+          class="p-button-outlined"
+          :chooseLabel="field.type == 'image' ? 'Выбрать изображение' : 'Выбрать файл'"
+        />
+        <a @click="downloadFile(field)" href="#">{{ getLoadedFilePreview(field) }}</a>
       </div>
 
       <!-- Writer -->
@@ -356,13 +372,16 @@ export default {
     },
 
     getLoadedFilePreview(field: FieldDto) {
+      console.log(field)
+      if (field.docName) return field.docName
       if (!field.value) return null
       if (field.value[0] == "/") return field.value
-      if (field.docName) return field.docName
       else field.value
     },
     
-    async downloadFile(fileName: string) {
+    async downloadFile(field: FieldDto) {
+      if (field.loaded) return;
+      const fileName = field.value
       const response = await fetch(`${appConf.proto}://${appConf.endpoint}/files${fileName}`);
       if (!response.ok) throw new Error('Network response was not ok');
       const blob = await response.blob();
@@ -392,6 +411,7 @@ export default {
         field.docName = file.name
         field.value = field.value.split("base64,")[1] 
       }
+      field.loaded = true
     },
     handleSelectorChange(event, field) {
       field.value = event.value;
