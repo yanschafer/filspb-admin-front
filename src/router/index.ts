@@ -7,7 +7,7 @@ import DashboardSettingsView from '@/views/DashboardSettingsView.vue'
 import TokenUtil from '@/utils/token.util'
 
 const router = createRouter({
-  history: createWebHistory('/filspb-admin/'),
+  history: createWebHistory('/'),
   routes: [
     {
       path: '/login',

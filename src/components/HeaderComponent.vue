@@ -28,11 +28,11 @@ const router = useRouter();
 defineEmits(['toggle-sidebar']);
 
 const goToWebsite = () => {
-    window.open('https://volkcom.ru/filspb', '_blank');
+    window.open('https://filspb.ru', '_blank');
 };
 
 const logout = () => {
-    TokenUtil.clearTokens();
+    TokenUtil.logout();
     router.push('/login');
 };
 </script>

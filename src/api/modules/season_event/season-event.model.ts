@@ -18,7 +18,7 @@ export default class SeasonEventModel extends BaseModel<Dto, ListDto, CreateDto,
                 {item: "price", label: "Цена", type: "text"},
                 {item: "isActive", label: "Активен", type: "selector", selectorOptions: {"Да": true, "Нет": false}},
                 {item: "events", label: "Мероприятия", type: "model-multi-selector", selectorModel: new EventSecondModel()},
-                {item: "purchaseLink", label: "Цена от", type: "text"},
+                {item: "purchaseLink", label: "Ссылка", type: "text"},
             ]
         )
     }
