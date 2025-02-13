@@ -66,7 +66,7 @@
           </template>
           <template #option="slotProps">
             <div class="flex items-center">
-              <div>{{ slotProps.option.name }}</div>
+              <div>{{ slotProps.option.originalIndex + '. ' + slotProps.option.name }}</div>
             </div>
           </template>
         </Select>
@@ -106,7 +106,7 @@
           </template>
           <template #option="slotProps">
             <div class="flex items-center">
-              <div>{{ slotProps.option.name }}</div>
+              <div>{{ slotProps.option.originalIndex + '. ' + slotProps.option.name }}</div>
             </div>
           </template>
         </MultiSelect>
@@ -337,11 +337,14 @@ export default {
       console.log('Model options for', field.item, ':', options);
       if (!options) return [];
       
-      // Убедимся, что используем правильные поля для опций
-      return options.map(opt => ({
-        value: opt.value,
-        name: opt.name
-      }));
+      // Добавляем оригинальный индекс и сортируем по имени
+      return options
+        .map((opt, index) => ({
+          value: opt.value,
+          name: opt.name,
+          originalIndex: index + 1
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
     },
     
     getSelectedOptions(field, selectedValues) {
