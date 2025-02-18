@@ -33,6 +33,10 @@ export const selectedModelStore = defineStore("SelectedModel", {
             selectorModel: new BaseModel("", {}, []),
             selectorOptions: []
         }],
+        sorting: {
+            sortField: "id",
+            sortOrder: 1
+        },
         showPositionAndVisibilityControls: true,
         selectedItem: {},
         tabToModel: {
@@ -79,6 +83,9 @@ export const selectedModelStore = defineStore("SelectedModel", {
             this.fields = model.fields
             this.fields.push({item: 'position'})
             this.fields.push({item: 'visible'})
+            this.sorting = (model.sorting == null) 
+                    ? { sortField: "id", sortOrder: 1 } 
+                    : model.sorting
 
             this.showPositionAndVisibilityControls = model.showControls
 

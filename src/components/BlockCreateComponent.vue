@@ -112,8 +112,9 @@ export default {
       this.isEditing = true;
     },
     saveEdit() {
+      console.log(this.field.value, this.editingIndex, this.editedPerson)
       if (this.editingIndex !== null) {
-        this.$set(this.field.value, this.editingIndex, { ...this.editedPerson });
+        this.field.value[this.editingIndex] = {...this.editedPerson}
         this.isEditing = false;
       }
     }

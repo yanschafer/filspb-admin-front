@@ -9,7 +9,7 @@
             <div class="create-button" @click="$router.push({path: `/dashboard/${$route.params.tab}/create`})">
               Создать элемент +
             </div>
-            <ListComponent @update:items="updateItems" :items="listItems" />
+            <ListComponent :sort-field="sorting.sortField" :sort-order="sorting.sortOrder" @update:items="updateItems" :items="listItems" />
         </div>
     </section>
 </template>
@@ -30,6 +30,10 @@ export default {
     return {
       listItems: [],
       fields: [],
+      sorting: {
+        sortField: "id",
+        sortOrder: 1
+      },
       modelOptions: {},
       selectedModel: selectedModelStore(),
       keyUpdater: Date.now(),
@@ -49,6 +53,7 @@ export default {
       this.selectedModel.loadModelByName(this.$route.params.tab).finally(() => {
         this.fields = this.selectedModel.fields
         this.listItems = this.selectedModel.items
+        this.sorting = this.selectedModel.sorting
         this.keyUpdater = Date.now()
       })
     },

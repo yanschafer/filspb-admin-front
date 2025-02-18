@@ -9,7 +9,12 @@
       />
     </div>
 
-    <DataTable :value="filteredItems" :paginator="true" :rows="10">
+    <DataTable  :value="filteredItems" 
+                :sort-field="sortField" 
+                :sort-order="sortOrder" 
+                removable-sort
+                :paginator="true" 
+                :rows="10">
       <Column field="id" header="#" sortable filter :style="{ width: '10%' }" />
 
       <Column
@@ -76,6 +81,14 @@ export default {
     InputText,
   },
   props: {
+    sortField: {
+      type: String,
+      default: "id",
+    },
+    sortOrder: {
+      type: Number,
+      default: 1,
+    },
     items: {
       type: Array,
       required: true,

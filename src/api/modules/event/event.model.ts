@@ -5,6 +5,7 @@ import Dto from "./dto/event.dto";
 import BaseModel from "../base.model";
 import HallModel from "../hall/hall.model";
 import EventSecondModel from "../event_second/event-second.model";
+import PlatfromModel from "../platform/platform.model";
 
 export default class EventModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
@@ -15,11 +16,17 @@ export default class EventModel extends BaseModel<Dto, ListDto, CreateDto, Updat
                 {item: "date", label: "Дата", type: "timestamp"},
                 {item: "time", label: "Время", type: "text"},
                 {item: "eventId", label: "Событие", type: "model-selector", selectorModel: new EventSecondModel()},
-                {item: "hallId", label: "Зал", type: "model-selector", selectorProcessor: (row) => {return `${row.platformName}, ${row.name}`}, selectorModel: new HallModel()},
+                {item: "platformId", label: "Площадка", type: "model-selector", selectorProcessor: (row) => {return `${row.name}`}, selectorModel: new PlatfromModel()},
+                {item: "hallId", label: "Зал", type: "model-selector", selectorProcessor: (row) => {return `${row.name}`}, selectorModel: new HallModel()},
                 {item: "price", label: "Цена от", type: "text"},
                 {item: "soldOut", label: "Билеты распроданы", type: "selector", selectorOptions: {"Да": true, "Нет": false}},
                 {item: "purchaseLink", label: "Ссылка", type: "text"},
-            ]
+            ],
+            true,
+            {
+                sortField: "date",
+                sortOrder: -1
+            }
         )
     }
 }
