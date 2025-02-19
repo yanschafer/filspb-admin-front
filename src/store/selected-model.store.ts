@@ -30,6 +30,7 @@ export const selectedModelStore = defineStore("SelectedModel", {
             label: "string",
             type: "string",
             value: "any",
+            valueName: "any",
             selectorModel: new BaseModel("", {}, []),
             selectorOptions: []
         }],
@@ -203,6 +204,10 @@ export const selectedModelStore = defineStore("SelectedModel", {
                     if (el.type == 'model-multi-selector') {
                         buildObject[el.item] = el.value
                     }
+
+                    if (el.type == 'image') {
+                        buildObject['imageName'] = el.valueName
+                    }
                 }
             })
 
@@ -214,6 +219,10 @@ export const selectedModelStore = defineStore("SelectedModel", {
                     buildObject.position = 1
             }
             
+            if (buildObject["visible"] == "")
+                buildObject["visible"] = false
+            // delete buildObject["visible"]
+
             if (this.creation) return await this.model.create(buildObject)
             else return await this.model.patch(this.selectedItem.id, buildObject)
         }

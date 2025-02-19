@@ -7,7 +7,7 @@ import BaseModel from "../base.model";
 export default class NewsModel extends BaseModel<Dto, ListDto, CreateDto, UpdateDto> {
     constructor() {
         super('news', {"name": "Название"}, [
-            {item: "date", label: "Дата", type: "text"},
+            {item: "date", label: "Дата", type: "timestamp"},
             {item: "name", label: "Название", type: "text"},
             {item: "image", label: "Изображение", type: "image"},
             {item: "shortDescription", label: "Краткий текст новости", type: "long-text"},

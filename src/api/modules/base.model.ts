@@ -7,6 +7,7 @@ export interface FieldDto {
     label: string,
     type: string,
     value?: any,
+    valueName?: string,
     selectorProcessor?: Function,
     selectorModel?: BaseModel<any, any, any, any>,
     selectorOptions?: Record<string, any>

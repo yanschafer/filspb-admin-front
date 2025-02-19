@@ -408,8 +408,9 @@ export default {
       field.value
     },
     async onFileSelect(event, field: FieldDto) {
-      const file = event.files[0];
+      const file: File = event.files[0];
       field.value = (await convertToBase64(file))
+      field.valueName = file.name
       if (field.type == 'file') {
         field.docName = file.name
         field.value = field.value.split("base64,")[1] 

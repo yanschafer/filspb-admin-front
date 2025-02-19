@@ -12,7 +12,7 @@ export default class ReviewModel extends BaseModel<Dto, ListDto, CreateDto, Upda
             {item: "eventId", label: "Событие", type: "model-selector", selectorProcessor: (row) => {return `${row.name}`}, selectorModel: new EventSecondModel()},
             {item: "name", label: "Имя", type: "text"},
             {item: "review", label: "Текст отзыва", type: "long-text"},
-            {item: "date", label: "Дата", type: "text"},
+            {item: "date", label: "Дата", type: "timestamp"},
         ])
     }
 }
